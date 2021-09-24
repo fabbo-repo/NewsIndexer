@@ -7,6 +7,9 @@ def dp_restricted_damerau_backwards(x, y):
     return 0 # reemplazar/completar
 
 def dp_intermediate_damerau_backwards(x, y):
+    for i in range(0, len(x)) : 
+        for j in range(0, len(x)) :
+            print("Faltan cosas uwu") 
     return 0 # reemplazar/completar
 
 test = [("algoritmo","algortimo"),
