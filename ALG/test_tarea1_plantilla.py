@@ -28,6 +28,11 @@ def dp_restricted_damerau_backwards(x, y) :
     #        if i > 1 and j > 1 and x[i-1] == y[j] and x[i] == y[j-1]:
     #            D.append(matrizLev[i-2][j-2] + 1)
     #        matrizLev[i][j] = min(D)
+
+
+    #Esto es terrible a todos los niveles del ser humano pero ya funciona como el output del archivo marca#
+    #He añadido -1 en cada "comprobacion" de algun elemento de las listas de las cadenas de entrada porque si no esto explotaba o no funcionaba#
+    #Es lento como sus muertos, ya se optimizará TODO#
     def recLR(i,j,cx,cy):
         D=[]
         if i==0 and j == 0:
@@ -36,14 +41,14 @@ def dp_restricted_damerau_backwards(x, y) :
             D.append(recLR(i-1,j,cx,cy) + 1)
         if j > 0:
             D.append(recLR(i,j-1,cx,cy) + 1)
-        if i > 0 and j > 0 and cx[i] == cy[j]:
+        if i > 0 and j > 0 and cx[i-1] == cy[j-1]:
             D.append(recLR(i-1,j-1,cx,cy))
-        if i > 0 and j > 0 and cx[i] != cy[j]:
+        if i > 0 and j > 0 and cx[i-1] != cy[j-1]:
             D.append(recLR(i-1,j-1,cx,cy) + 1)
-        if i > 1 and j > 1 and cx[i-1] == cy[j] and cx[i] == cy[j-1]:
+        if i > 1 and j > 1 and cx[i-2] == cy[j-1] and cx[i-1] == cy[j-2]:
             D.append(recLR(i-2,j-2,cx,cy) + 1)
         return min(D)
-    matrizLev[lengthx-1][lengthy-1] = recLR(lengthx-1,lengthy-1,x,y)
+    matrizLev[lengthx-1][lengthy-1] = recLR(lengthx,lengthy,x,y)
     return matrizLev[lengthx-1][lengthy-1]
 
 
