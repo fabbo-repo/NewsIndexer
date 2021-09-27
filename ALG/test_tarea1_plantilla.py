@@ -7,7 +7,44 @@ def dp_levenshtein_backwards(x, y) :
 
 ##INCOMPLETO#######################################################
 def dp_restricted_damerau_backwards(x, y) :
-    return 0
+    lengthx = len(x)#guardamos la longitud de la cadena x
+    lengthy = len(y)#guardamos la longitud de la cadena y
+    #la matriz tendrá tantas filas y columnas como dimensiones
+    # (x,y)
+    matrizLev = np.zeros((lengthx,lengthy),dtype = int)
+    ############## HE INTRODUCIDO LAS 2 POSIBLES FORMAS DE HACERLO, ITERATIVO O RECURSIVO, Y SIN EMBARGO, AMBAS DAN MAL EL ULTIMO CASO ################
+    ############## QUEDA PENDIENTE SABER PORQUÉ DA 2 EN VEZ DE 3 EL CASO DE ACB Y BA ##################################################################
+    #El iterativo está comentado#
+    #for i in range(0,lengthx):
+    #    for j in range(0,lengthy):
+    #        D=[] #Utilizo el array para guardarme los resultados de las op y elegir el min
+    #        if i == 0 and j == 0: D.append(0)
+    #        if i > 0: D.append(matrizLev[i-1][j] + 1)
+    #        if j > 0: D.append(matrizLev[i][j-1] + 1)
+    #        if i > 0 and j > 0 and x[i] == y[j]:
+    #            D.append(matrizLev[i-1][j-1])
+    #        if i > 0 and j > 0 and x[i] != y[j]:
+    #            D.append(matrizLev[i-1][j-1] + 1)
+    #        if i > 1 and j > 1 and x[i-1] == y[j] and x[i] == y[j-1]:
+    #            D.append(matrizLev[i-2][j-2] + 1)
+    #        matrizLev[i][j] = min(D)
+    def recLR(i,j,cx,cy):
+        D=[]
+        if i==0 and j == 0:
+            return 0
+        if i > 0:
+            D.append(recLR(i-1,j,cx,cy) + 1)
+        if j > 0:
+            D.append(recLR(i,j-1,cx,cy) + 1)
+        if i > 0 and j > 0 and cx[i] == cy[j]:
+            D.append(recLR(i-1,j-1,cx,cy))
+        if i > 0 and j > 0 and cx[i] != cy[j]:
+            D.append(recLR(i-1,j-1,cx,cy) + 1)
+        if i > 1 and j > 1 and cx[i-1] == cy[j] and cx[i] == cy[j-1]:
+            D.append(recLR(i-2,j-2,cx,cy) + 1)
+        return min(D)
+    matrizLev[lengthx-1][lengthy-1] = recLR(lengthx-1,lengthy-1,x,y)
+    return matrizLev[lengthx-1][lengthy-1]
 
 
 ##INCOMPLETO#######################################################
