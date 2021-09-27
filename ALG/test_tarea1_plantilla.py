@@ -1,16 +1,34 @@
 import numpy as np
 
-def dp_levenshtein_backwards(x, y):
-    return 0 # reemplazar/completar
+##INCOMPLETO#######################################################
+def dp_levenshtein_backwards(x, y) :
+    return 0
 
-def dp_restricted_damerau_backwards(x, y):
-    return 0 # reemplazar/completar
 
-def dp_intermediate_damerau_backwards(x, y):
-    for i in range(0, len(x)) : 
-        for j in range(0, len(x)) :
-            print("Faltan cosas uwu") 
-    return 0 # reemplazar/completar
+##INCOMPLETO#######################################################
+def dp_restricted_damerau_backwards(x, y) :
+    return 0
+
+
+##INCOMPLETO#######################################################
+def dp_intermediate_damerau_backwards(x, y) :
+    lenx = len(x); leny = len(y)
+    cte = 1
+    # matriz tendrá tantas filas como caracteres en x
+    # y tantas columnas como caracteres en y 
+    matriz = np.zeros( (lenx, leny) , dtype=int)
+    for i in range(0, lenx) : 
+        for j in range(0, leny) :
+            D = []
+            if i==0 and j==0 : D.append(0)
+            if i>0 : D.append(matriz[i-1][j] + 1)
+            if j>0 : D.append(matriz[i][j-1] + 1)
+            if i>0 and j>0 : 
+                D.append(matriz[i-1][j-1] + (x[i]!=y[j]))
+            # Condicion adicional
+            if i+j+1 < np.abs(i-j) : matriz[i-1][j-1]
+            matriz[i][j] = min(D)
+    return matriz[lenx-1][leny-1]
 
 test = [("algoritmo","algortimo"),
         ("algoritmo","algortximo"),
