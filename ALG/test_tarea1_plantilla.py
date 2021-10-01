@@ -2,8 +2,25 @@
 
 ##INCOMPLETO#######################################################
 def dp_levenshtein_backwards(x, y) :
-    return 0
+    lengthX = len(x)
+    lengthY = len(y)  # m
 
+    # Inicializar columna Y a [0,1,2,...,m]
+    prev = [i for i in range(lengthY+1)]
+    current = [1]
+
+    for i in range(lengthX):
+        for j in range(lengthY):
+            if x[i]==y[j]: current.append(min(prev[j], prev[j+1]+1, current[j]+1))
+            else: current.append(min(prev[j]+1, prev[j+1]+1, current[j]+1))
+
+        # print(current) para ver la matriz transpuesta
+        # Vaciar lista para siguiente iteración
+        if i!=lengthX-1:
+            prev = current  # paso por referencia
+            current = [i+2]  # ahora ya no por referencia
+
+    return current[-1]
 
 #########################################################
 def dp_restricted_damerau_backwards(x, y) :
