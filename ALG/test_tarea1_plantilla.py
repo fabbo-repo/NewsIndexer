@@ -1,48 +1,38 @@
-import numpy as np
+#import numpy as np
 
 ##INCOMPLETO#######################################################
 def dp_levenshtein_backwards(x, y) :
     return 0
 
 
-##INCOMPLETO#######################################################
+#########################################################
 def dp_restricted_damerau_backwards(x, y) :
-    lengthx = len(x)#guardamos la longitud de la cadena x
-    lengthy = len(y)#guardamos la longitud de la cadena y
-    #la matriz tendrá tantas filas y columnas como dimensiones
-    # (x,y)
-    matrizLev = np.zeros((lengthx,lengthy),dtype = int)
-    B={}
-    ############## HE INTRODUCIDO LAS 2 POSIBLES FORMAS DE HACERLO, ITERATIVO O RECURSIVO, Y SIN EMBARGO, AMBAS DAN MAL EL ULTIMO CASO ################
-    ############## QUEDA PENDIENTE SABER PORQUÉ DA 2 EN VEZ DE 3 EL CASO DE ACB Y BA ##################################################################
-    #Esto es terrible a todos los niveles del ser humano pero ya funciona como el output del archivo marca#
-    #He añadido -1 en cada "comprobacion" de algun elemento de las listas de las cadenas de entrada porque si no esto explotaba o no funcionaba#
-    #Es lento como sus muertos, ya se optimizará TODO#
-    def recLR(i,j,cx,cy,B):
-        D=[]
-        if (i,j) in B:
-            return B[i,j]
-        if i==0 and j == 0:
-            return 0
-        if i > 0:
-            D.append(recLR(i-1,j,cx,cy,B) + 1)
-        if j > 0:
-            D.append(recLR(i,j-1,cx,cy,B) + 1)
-        if i > 0 and j > 0 and cx[i-1] == cy[j-1]:
-            D.append(recLR(i-1,j-1,cx,cy,B))
-        if i > 0 and j > 0 and cx[i-1] != cy[j-1]:
-            D.append(recLR(i-1,j-1,cx,cy,B) + 1)
-        if i > 1 and j > 1 and cx[i-2] == cy[j-1] and cx[i-1] == cy[j-2]:
-            D.append(recLR(i-2,j-2,cx,cy,B) + 1)
-        B[i,j] = min(D)
-        return min(D)
-
-    matrizLev[lengthx-1][lengthy-1] = recLR(lengthx,lengthy,x,y,B)
-    return matrizLev[lengthx-1][lengthy-1]
+    lenx = len(x) # longitud de la cadena x
+    leny = len(y) # longitud de la cadena y
+    
+    # current, prev1 y prev2 almacenaran las distancias de cada caracter
+    # de forma eficiente
+    prev1 = []; current = []
+    for i in range(0, lenx+1) : 
+        prev2 = prev1; prev1 = current; current = []
+        for j in range(0, leny+1) :
+            D=[]
+            if i==0 and j == 0 : D.append(0)
+            if i > 0 : D.append(prev1[j] + 1)
+            if j > 0 : D.append(current[j-1] + 1)
+            if i > 0 and j > 0 :
+                D.append(prev1[j-1] + (x[i-1] != y[j-1]))
+            if i > 1 and j > 1 and x[i-2] == y[j-1] and x[i-1] == y[j-2] :
+                D.append(prev2[j-2] + 1)
+            # Se añade el mínimo de las distancias a current
+            current.append(min(D))
+        #print(current)
+    return current[leny]
 
 
 ##INCOMPLETO#######################################################
 def dp_intermediate_damerau_backwards(x, y) :
+    return 0
     lenx = len(x); leny = len(y)
     cte = 1
     # matriz tendrá tantas filas como caracteres en x
@@ -57,7 +47,7 @@ def dp_intermediate_damerau_backwards(x, y) :
             if i>0 and j>0 : 
                 D.append(matriz[i-1][j-1] + (x[i]!=y[j]))
             # Condicion adicional
-            if i+j+1 < np.abs(i-j) : matriz[i-1][j-1]
+            # if i+j+1 < np.abs(i-j) : matriz[i-1][j-1]
             matriz[i][j] = min(D)
     return matriz[lenx-1][leny-1]
 
