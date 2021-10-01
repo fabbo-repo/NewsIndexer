@@ -3,7 +3,7 @@ def dp_levenshtein_backwards(x, y) :
     lengthX = len(x)
     lengthY = len(y)  # m
 
-    # Inicializar columna Y a [0,1,2,...,m]
+    # Inicializar 1ª columna de la matriz a [0,1,2,...,m]
     prev = [i for i in range(lengthY+1)]
     current = [1]
 
