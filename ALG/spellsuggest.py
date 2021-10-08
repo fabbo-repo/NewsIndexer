@@ -1,9 +1,8 @@
 # -*- coding: utf-8 -*-
 import re
-import test_tarea2 as distan #import of the test_tarea2.py with another name
+import threshold_distances as distan
 from trie import Trie
 import sys
-from argparse import ArgumentParser
 
 class SpellSuggester:
 
@@ -44,8 +43,6 @@ class SpellSuggester:
 
         """Método para sugerir palabras similares siguiendo la tarea 3.
 
-        A completar.
-
         Args:
             term (str): término de búsqueda.
             distance (str): algoritmo de búsqueda a utilizar
@@ -56,27 +53,26 @@ class SpellSuggester:
         """
 
         assert distance in ["levenshtein", "restricted", "intermediate"]
-
+        
         results = {} # diccionario termino:distancia
-        # TODO
-        #Saving the length of the term
+        # Saving the length of the term
         lengthAuxiliar = len(term)
-        #Check the type of edit distance its given
+        # Check the type of edit distance its given
         if distance == 'levenshtein':
             callAux =  distan.dp_levenshtein_threshold
         elif distance == 'restricted':
             callAux = distan.dp_restricted_damerau_threshold
         elif distance == 'intermediate':
             callAux = distan.dp_intermediate_damerau_threshold
-        #Loop to check the distance between each word on the vocabulary and the term we have on the arguments
+        # Loop to check the distance between each word on the vocabulary 
+        # and the term we have on the arguments
         for word in self.vocabulary:
-            #Getting the actual distance
+            # Getting the actual distance
             distancia = callAux(word,term,threshold)
-            #Check if the actual distance is lower than the threshold, if not, get the next word
+            # Check if the actual distance is lower than the threshold, 
+            # if not, get the next word
             if distancia <= threshold:
-                #We check if the word was already on the result dictionary
                 if word in results:
-                    #if it was already in the voc , just add the distance to that word
                     results[word].append(distancia)
                 else:
                     results[word] = distancia
@@ -92,8 +88,7 @@ class TrieSpellSuggester(SpellSuggester):
     
 if __name__ == "__main__":
     try:
-        for i, arg in enumerate(sys.argv):
-            path = str(arg)
+        path = sys.argv[1]
         spellsuggester = TrieSpellSuggester(path)
         print(spellsuggester.suggest("casa"))
         # cuidado, la salida es enorme print(suggester.trie)
