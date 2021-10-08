@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
-
+import test_tarea2 as distan #import of the test_tarea2.py with another name
 from trie import Trie
 
 class SpellSuggester:
@@ -38,7 +38,7 @@ class SpellSuggester:
             vocab.discard('') # por si acaso
             return sorted(vocab)
 
-    def suggest(self, term, distance="levenshtein", threshold=None):
+    def suggest(self, term, distance="levenshtein", threshold=2):
 
         """Método para sugerir palabras similares siguiendo la tarea 3.
 
@@ -52,10 +52,32 @@ class SpellSuggester:
                 puede utilizarse con los algoritmos de distancia mejorada de la tarea 2
                 o filtrando la salida de las distancias de la tarea 2
         """
+
         assert distance in ["levenshtein", "restricted", "intermediate"]
 
         results = {} # diccionario termino:distancia
         # TODO
+        #Saving the length of the term
+        lengthAuxiliar = len(term)
+        #Check the type of edit distance its given
+        if distance == 'levenshtein':
+            callAux =  distan.dp_levenshtein_threshold
+        elif distance == 'restricted':
+            callAux = distan.dp_restricted_damerau_threshold
+        elif distance == 'intermediate':
+            callAux = distan.dp_intermediate_damerau_threshold
+        #Loop to check the distance between each word on the vocabulary and the term we have on the arguments
+        for word in self.vocabulary:
+            #Getting the actual distance
+            distancia = callAux(word,term,threshold)
+            #Check if the actual distance is lower than the threshold, if not, get the next word
+            if distancia <= threshold:
+                #We check if the word was already on the result dictionary
+                if word in results:
+                    #if it was already in the voc , just add the distance to that word
+                    results[word].append(distancia)
+                else:
+                    results[word] = distancia
         return results
 
 class TrieSpellSuggester(SpellSuggester):
@@ -67,8 +89,8 @@ class TrieSpellSuggester(SpellSuggester):
         self.trie = Trie(self.vocabulary)
     
 if __name__ == "__main__":
-    spellsuggester = TrieSpellSuggester("./corpora/quijote.txt")
-    print(spellsuggester.suggest("alábese"))
+    spellsuggester = TrieSpellSuggester("./quijote.txt")
+    print(spellsuggester.suggest("casa"))
     # cuidado, la salida es enorme print(suggester.trie)
 
     
