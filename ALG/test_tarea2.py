@@ -4,29 +4,27 @@
 def dp_levenshtein_threshold(x, y, th):
         
     lengthX = len(x)
-    lengthY = len(y)  # m
+    lengthY = len(y)     # m
     
-    if(abs(lengthY - lengthX) > th):
-        return th + 1
+    if(abs(lengthY-lengthX) > th) : return th+1
 
     # Initialize 1st column of the array to [0,1,2,...,m]
     prev = [i for i in range(lengthY+1)]
     current = [1]
 
-    for i in range(lengthX):
-        for j in range(lengthY):
+    for i in range(lengthX) :
+        for j in range(lengthY) :
             if x[i]==y[j]: current.append(min(prev[j], prev[j+1]+1, current[j]+1))
             else: current.append(min(prev[j]+1, prev[j+1]+1, current[j]+1))
             
-        if(min(current) > th):
-            return th + 1
+        if(min(current) > th) : return th + 1
         
         # Empty list for next iteration
         if i!=lengthX-1:
             prev = current      # list is copied by reference
             current = [i+2]     # no longer copied by reference
 
-    return current[-1] if current[-1] <= th else th + 1
+    return current[-1] if current[-1] <= th else th+1
 
 #############################################################################################
 #    Restricted Damerau-Levenstein Distance with threshold 
@@ -34,8 +32,7 @@ def dp_levenshtein_threshold(x, y, th):
 def dp_restricted_damerau_threshold(x, y, th):
     lenx = len(x); leny = len(y) # x and y string length
     
-    if(abs(leny - lenx) > th):
-        return th + 1
+    if(abs(leny-lenx) > th) : return th+1
     
     # current, prev1 y prev2 prev2 will efficiently store the distances 
     # of each character 
@@ -53,8 +50,8 @@ def dp_restricted_damerau_threshold(x, y, th):
                 D.append(prev2[j-2] + 1)
             # The minimum of the distances is added to current
             current.append(min(D))
-        if(min(current) > th):
-            return th + 1
+        if(min(current) > th) : return th+1
+    
     return current[-1] if current[-1] <= th else th + 1
 
 #############################################################################################
@@ -64,8 +61,7 @@ def dp_intermediate_damerau_threshold(x, y, th):
     lenx = len(x); leny = len(y)
     cte = 1 # constant preset to 1 considering cost(acb, ba)=2 and cost(ab, bca)=2
 
-    if(abs(leny - lenx) > th):
-        return th + 1
+    if(abs(leny-lenx) > th) : return th+1
 
     # In this case prev3 is needed to store extra distances
     prev2 = []; prev1 = []; current = []
@@ -89,8 +85,9 @@ def dp_intermediate_damerau_threshold(x, y, th):
                 D.append(prev3[j-2] + 2)
             # The minimum of the distances is added to current
             current.append(min(D))
-        if(min(current) > th):
-            return th + 1
+        
+        if(min(current) > th) : return th+1
+    
     return current[-1] if current[-1] <= th else th + 1
 
 
