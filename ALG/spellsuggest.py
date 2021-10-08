@@ -2,6 +2,8 @@
 import re
 import test_tarea2 as distan #import of the test_tarea2.py with another name
 from trie import Trie
+import sys
+from argparse import ArgumentParser
 
 class SpellSuggester:
 
@@ -89,8 +91,12 @@ class TrieSpellSuggester(SpellSuggester):
         self.trie = Trie(self.vocabulary)
     
 if __name__ == "__main__":
-    spellsuggester = TrieSpellSuggester("./quijote.txt")
-    print(spellsuggester.suggest("casa"))
-    # cuidado, la salida es enorme print(suggester.trie)
-
-    
+    try:
+        for i, arg in enumerate(sys.argv):
+            path = str(arg)
+        spellsuggester = TrieSpellSuggester(path)
+        print(spellsuggester.suggest("casa"))
+        # cuidado, la salida es enorme print(suggester.trie)
+    except Exception as err:
+        print("\n spellsuggest class error :",sys.exc_info[0])
+        sys.exit(-1)
