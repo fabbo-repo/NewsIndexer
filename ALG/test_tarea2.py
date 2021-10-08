@@ -125,7 +125,7 @@ algoritmo    algortximo   	 levenshtein  2 restricted  2 intermediate  2
 algoritmo    lagortimo    	 levenshtein  2 restricted  2 intermediate  2
 algoritmo    agaloritom   	 levenshtein  2 restricted  2 intermediate  2
 algoritmo    algormio     	 levenshtein  2 restricted  2 intermediate  2
-acb          ba           	 levenshtein  2 restricted  2 intermediate  2
+acb          ba           	 levenshtein  2 restricted  2 intermediate  2   (levenshtein puede dar 3 por el return)
 thresholds:   2
 algoritmo    algortimo    	 levenshtein  2 restricted  1 intermediate  1
 algoritmo    algortximo   	 levenshtein  3 restricted  3 intermediate  2
