@@ -1,7 +1,7 @@
 #############################################################################################
-#    Distancia de Levenstein
+#    Levenstein Distance with threshold 
 #############################################################################################
-def dp_levenshtein_backwards(x, y) :
+def dp_levenshtein_threshold(x, y, th):
     lengthX = len(x)
     lengthY = len(y)  # m
 
@@ -13,7 +13,7 @@ def dp_levenshtein_backwards(x, y) :
         for j in range(lengthY):
             if x[i]==y[j]: current.append(min(prev[j], prev[j+1]+1, current[j]+1))
             else: current.append(min(prev[j]+1, prev[j+1]+1, current[j]+1))
-
+        
         # Vaciar lista para siguiente iteración
         if i!=lengthX-1:
             prev = current  # paso por referencia
@@ -24,7 +24,7 @@ def dp_levenshtein_backwards(x, y) :
 #############################################################################################
 #    Distancia de Damerau-Levenstein restringida
 #############################################################################################
-def dp_restricted_damerau_backwards(x, y) :
+def dp_restricted_damerau_threshold(x, y, th):
     lenx = len(x) # longitud de la cadena x
     leny = len(y) # longitud de la cadena y
     
@@ -49,7 +49,7 @@ def dp_restricted_damerau_backwards(x, y) :
 #############################################################################################
 #    Distancia de Damerau-Levenstein intermedia
 #############################################################################################
-def dp_intermediate_damerau_backwards(x, y) :
+def dp_intermediate_damerau_threshold(x, y, th):
     lenx = len(x) # longitud de la cadena x
     leny = len(y) # longitud de la cadena y
     cte = 1 # constante prefijada a 1 considerando coste(acb, ba)=2 y coste(ab, bca)=2
@@ -85,28 +85,50 @@ def dp_intermediate_damerau_backwards(x, y) :
 #############################################################################################
 #    Pruebas:
 #############################################################################################
-test = [("algoritmo","algortimo"),
+test = [
+        ("algoritmo","algortimo"),
         ("algoritmo","algortximo"),
         ("algoritmo","lagortimo"),
         ("algoritmo","agaloritom"),
         ("algoritmo","algormio"),
-        ("acb","ba")]
+        ("acb","ba")
+        ]
 
-for x,y in test:
-    print(f"{x:12} {y:12}",end="")
-    for dist,name in ((dp_levenshtein_backwards,"levenshtein"),
-                      (dp_restricted_damerau_backwards,"restricted"),
-                      (dp_intermediate_damerau_backwards,"intermediate")):
-        print(f" {name} {dist(x,y):2}",end="")
-    print()
+thrs = range(1,4)
+
+for threshold in thrs:
+    print(f"thresholds: {threshold:3}")
+    for x,y in test:
+        print(f"{x:12} {y:12} \t",end="")
+        for dist,name in ((dp_levenshtein_threshold,"levenshtein"),
+                          (dp_restricted_damerau_threshold,"restricted"),
+                          (dp_intermediate_damerau_threshold,"intermediate")):
+        
+            print(f" {name} {dist(x,y,threshold):2}",end="")
+        print()
                  
 """
 Salida del programa:
 
-algoritmo    algortimo    levenshtein  2 restricted  1 intermediate  1
-algoritmo    algortximo   levenshtein  3 restricted  3 intermediate  2
-algoritmo    lagortimo    levenshtein  4 restricted  2 intermediate  2
-algoritmo    agaloritom   levenshtein  5 restricted  4 intermediate  3
-algoritmo    algormio     levenshtein  3 restricted  3 intermediate  2
-acb          ba           levenshtein  3 restricted  3 intermediate  2
+thresholds:   1
+algoritmo    algortimo    	 levenshtein  2 restricted  1 intermediate  1
+algoritmo    algortximo   	 levenshtein  2 restricted  2 intermediate  2
+algoritmo    lagortimo    	 levenshtein  2 restricted  2 intermediate  2
+algoritmo    agaloritom   	 levenshtein  2 restricted  2 intermediate  2
+algoritmo    algormio     	 levenshtein  2 restricted  2 intermediate  2
+acb          ba           	 levenshtein  2 restricted  2 intermediate  2
+thresholds:   2
+algoritmo    algortimo    	 levenshtein  2 restricted  1 intermediate  1
+algoritmo    algortximo   	 levenshtein  3 restricted  3 intermediate  2
+algoritmo    lagortimo    	 levenshtein  3 restricted  2 intermediate  2
+algoritmo    agaloritom   	 levenshtein  3 restricted  3 intermediate  3
+algoritmo    algormio     	 levenshtein  3 restricted  3 intermediate  2
+acb          ba           	 levenshtein  3 restricted  3 intermediate  2
+thresholds:   3
+algoritmo    algortimo    	 levenshtein  2 restricted  1 intermediate  1
+algoritmo    algortximo   	 levenshtein  3 restricted  3 intermediate  2
+algoritmo    lagortimo    	 levenshtein  4 restricted  2 intermediate  2
+algoritmo    agaloritom   	 levenshtein  4 restricted  4 intermediate  3
+algoritmo    algormio     	 levenshtein  3 restricted  3 intermediate  2
+acb          ba           	 levenshtein  3 restricted  3 intermediate  2
 """         
