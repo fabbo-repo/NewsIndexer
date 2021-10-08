@@ -35,8 +35,8 @@ def dp_restricted_damerau_backwards(x, y) :
         for j in range(0, leny+1) :
             D=[]
             if i==0 and j == 0 : D.append(0)
-            if i > 0 : D.append(prev1[j] + 1)
-            if j > 0 : D.append(current[j-1] + 1)
+            if i > 0 : D.append(prev1[j] + 1)  # Initialize first column
+            if j > 0 : D.append(current[j-1] + 1)  # Initialize first row
             if i > 0 and j > 0 :
                 D.append(prev1[j-1] + (x[i-1] != y[j-1]))
             if i > 1 and j > 1 and x[i-2] == y[j-1] and x[i-1] == y[j-2] :
