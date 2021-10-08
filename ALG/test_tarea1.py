@@ -1,11 +1,11 @@
 #############################################################################################
-#    Distancia de Levenstein
+#    Levenstein Distance
 #############################################################################################
 def dp_levenshtein_backwards(x, y) :
     lengthX = len(x)
     lengthY = len(y)  # m
 
-    # Inicializar 1ª columna de la matriz a [0,1,2,...,m]
+    # Initialize 1st column of the array to [0,1,2,...,m]
     prev = [i for i in range(lengthY+1)]
     current = [1]
 
@@ -14,22 +14,21 @@ def dp_levenshtein_backwards(x, y) :
             if x[i]==y[j]: current.append(min(prev[j], prev[j+1]+1, current[j]+1))
             else: current.append(min(prev[j]+1, prev[j+1]+1, current[j]+1))
 
-        # Vaciar lista para siguiente iteración
+        # Empty list for next iteration
         if i!=lengthX-1:
-            prev = current  # paso por referencia
-            current = [i+2]  # ahora ya no por referencia
+            prev = current      # list is copied by reference
+            current = [i+2]     # no longer copied by reference
 
     return current[-1]
 
 #############################################################################################
-#    Distancia de Damerau-Levenstein restringida
+#    Restricted Damerau-Levenstein Distance
 #############################################################################################
 def dp_restricted_damerau_backwards(x, y) :
-    lenx = len(x) # longitud de la cadena x
-    leny = len(y) # longitud de la cadena y
+    lenx = len(x); leny = len(y) # x and y string length
     
-    # current, prev1 y prev2 almacenaran las distancias de cada caracter
-    # de forma eficiente
+    # current, prev1 y prev2 prev2 will efficiently store the distances 
+    # of each character 
     prev1 = []; current = []
     for i in range(0, lenx+1) : 
         prev2 = prev1; prev1 = current; current = []
@@ -42,20 +41,18 @@ def dp_restricted_damerau_backwards(x, y) :
                 D.append(prev1[j-1] + (x[i-1] != y[j-1]))
             if i > 1 and j > 1 and x[i-2] == y[j-1] and x[i-1] == y[j-2] :
                 D.append(prev2[j-2] + 1)
-            # Se añade el mínimo de las distancias a current
+            # The minimum of the distances is added to current
             current.append(min(D))
     return current[-1]
 
 #############################################################################################
-#    Distancia de Damerau-Levenstein intermedia
+#    Intermediate Damerau-Levenstein Distance
 #############################################################################################
 def dp_intermediate_damerau_backwards(x, y) :
-    lenx = len(x) # longitud de la cadena x
-    leny = len(y) # longitud de la cadena y
-    cte = 1 # constante prefijada a 1 considerando coste(acb, ba)=2 y coste(ab, bca)=2
+    lenx = len(x); leny = len(y)
+    cte = 1 # constant preset to 1 considering cost(acb, ba)=2 and cost(ab, bca)=2
 
-    # current, prev1, prev2 y prev3 almacenaran las distancias de cada caracter
-    # de forma eficiente
+    # In this case prev3 is needed to store extra distances
     prev2 = []; prev1 = []; current = []
     for i in range(0, lenx+1) : 
         prev3 = prev2; prev2 = prev1; prev1 = current; current = []
@@ -68,22 +65,20 @@ def dp_intermediate_damerau_backwards(x, y) :
                 D.append(prev1[j-1] + (x[i-1] != y[j-1]))
             if i > 1 and j > 1 and x[i-2] == y[j-1] and x[i-1] == y[j-2] :
                 D.append(prev2[j-2] + 1)
-
-            # Condiciones adicionales:
-            # Teniendo el ejemplo de x=ab e y=bca :
+            # Adittional conditions:
+            # Having the example of x=ab and y=bca:
             elif i > 1 and j > 1+cte and x[i-2] == y[j-1] and x[i-1] == y[j-2-cte] : 
                 D.append(prev2[j-3] + 2)
-            # Y lo contrario, x=bca e y=ab :
+            # And the opposite, x=bca and y=ab:
             elif i > 1+cte and j > 1 and x[i-2-cte] == y[j-1] and x[i-1] == y[j-2] : 
                 D.append(prev3[j-2] + 2)
-
-            # Se añade el mínimo de las distancias a current
+            # The minimum of the distances is added to current
             current.append(min(D))
     return current[-1]
 
 
 #############################################################################################
-#    Pruebas:
+#    Tests:
 #############################################################################################
 test = [("algoritmo","algortimo"),
         ("algoritmo","algortximo"),
