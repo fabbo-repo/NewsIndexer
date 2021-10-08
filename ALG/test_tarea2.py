@@ -24,7 +24,7 @@ def dp_levenshtein_threshold(x, y, th):
             prev = current      # list is copied by reference
             current = [i+2]     # no longer copied by reference
 
-    return current[-1] if current[-1] <= th else th+1
+    return current[-1]
 
 #############################################################################################
 #    Restricted Damerau-Levenstein Distance with threshold 
@@ -52,7 +52,7 @@ def dp_restricted_damerau_threshold(x, y, th):
             current.append(min(D))
         if(min(current) > th) : return th+1
     
-    return current[-1] if current[-1] <= th else th + 1
+    return current[-1]
 
 #############################################################################################
 #    Intermediate Damerau-Levenstein Distance with threshold 
@@ -88,7 +88,7 @@ def dp_intermediate_damerau_threshold(x, y, th):
         
         if(min(current) > th) : return th+1
     
-    return current[-1] if current[-1] <= th else th + 1
+    return current[-1]
 
 
 #############################################################################################
