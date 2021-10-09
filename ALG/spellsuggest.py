@@ -39,6 +39,11 @@ class SpellSuggester:
             vocab.discard('') # por si acaso
             return sorted(vocab)
 
+    def count_distance(self, word1, word2) :
+            positives = 0
+            negatives = 0
+            return max(positives, -negatives)
+
     def suggest(self, term, distance="levenshtein", threshold=2):
 
         """Método para sugerir palabras similares siguiendo la tarea 3.
@@ -64,11 +69,19 @@ class SpellSuggester:
             callAux = distan.dp_restricted_damerau_threshold
         elif distance == 'intermediate':
             callAux = distan.dp_intermediate_damerau_threshold
+        
         # Loop to check the distance between each word on the vocabulary 
         # and the term we have on the arguments
         for word in self.vocabulary:
-            # Getting the actual distance
-            distancia = callAux(word,term,threshold)
+            # Optimistic level of difference between lengths
+            if(abs(word-term) > threshold) : 
+                distancia = threshold+1
+            # Optimistic level based on the number of ocurrences of each character
+            elif(self.count_distance(word,term) > threshold) : 
+                distancia = threshold+1
+            else : 
+                distancia = callAux(word,term,threshold)
+            
             # Check if the actual distance is lower than the threshold, 
             # if not, get the next word
             if distancia <= threshold:
@@ -76,7 +89,10 @@ class SpellSuggester:
                     results[word].append(distancia)
                 else:
                     results[word] = distancia
+        
         return results
+
+    
 
 class TrieSpellSuggester(SpellSuggester):
     """

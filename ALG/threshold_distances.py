@@ -5,8 +5,6 @@ def dp_levenshtein_threshold(x, y, th):
         
     lengthX = len(x)
     lengthY = len(y)     # m
-    
-    if(abs(lengthY-lengthX) > th) : return th+1
 
     # Initialize 1st column of the array to [0,1,2,...,m]
     prev = [i for i in range(lengthY+1)]
@@ -31,8 +29,6 @@ def dp_levenshtein_threshold(x, y, th):
 #############################################################################################
 def dp_restricted_damerau_threshold(x, y, th):
     lenx = len(x); leny = len(y) # x and y string length
-    
-    if(abs(leny-lenx) > th) : return th+1
     
     # current, prev1 y prev2 prev2 will efficiently store the distances 
     # of each character 
@@ -60,8 +56,6 @@ def dp_restricted_damerau_threshold(x, y, th):
 def dp_intermediate_damerau_threshold(x, y, th):
     lenx = len(x); leny = len(y)
     cte = 1 # constant preset to 1 considering cost(acb, ba)=2 and cost(ab, bca)=2
-
-    if(abs(leny-lenx) > th) : return th+1
 
     # In this case prev3 is needed to store extra distances
     prev2 = []; prev1 = []; current = []
