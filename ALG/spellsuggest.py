@@ -40,9 +40,21 @@ class SpellSuggester:
             return sorted(vocab)
 
     def count_distance(self, word1, word2) :
-            positives = 0
-            negatives = 0
-            return max(positives, -negatives)
+            distance = 0; lista=[]; d1=d2={}
+            for c in word1: 
+                if c not in d1 : d1[c]=1
+                else: d1[c]+=1
+
+            for c in word2: 
+                if c not in d2 : d2[c]=1
+                else: d2[c]+=1
+
+            for c in lista: 
+                if c in d1 and c in d2 and d1[c] != d2[c]: distance += abs(d1[c]-d2[c])
+                elif c not in d1: distance += d2[c]
+                elif c not in d2: distance += d1[c]
+            
+            return distance
 
     def suggest(self, term, distance="levenshtein", threshold=2):
 
@@ -74,10 +86,11 @@ class SpellSuggester:
         # and the term we have on the arguments
         for word in self.vocabulary:
             # Optimistic level of difference between lengths
-            if(abs(word-term) > threshold) : 
+            if(abs(len(word)-len(term)) > threshold) : 
                 distancia = threshold+1
             # Optimistic level based on the number of ocurrences of each character
-            elif(self.count_distance(word,term) > threshold) : 
+            elif(distance == 'levenshtein' and \
+                self.count_distance(word,term) > threshold) : 
                 distancia = threshold+1
             else : 
                 distancia = callAux(word,term,threshold)
