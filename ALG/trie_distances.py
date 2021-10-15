@@ -4,31 +4,33 @@ from trie import Trie
 #    Levenstein Trie Distance
 #############################################################################################
 def dp_levenshtein_trie(x, trie, th) :
-    lengthX = len(x)
-    lengthY = trie.get_num_states()
+    len_pal = len(x)
+    len_trie = trie.get_num_states()
+    res = {}
 
     # Initialize 1st column of the array to [0,1,2,...,m]
-    prev = [i for i in range(lengthY+1)]
-    current = [1]
-
-    for i in range(lengthX) :
-        for j in range(lengthY) :
-            if x[i]==y[j]: current.append(min(prev[j], prev[j+1]+1, current[j]+1))
-            else: current.append(min(prev[j]+1, prev[j+1]+1, current[j]+1))
-            
-        if(min(current) > th) : return th + 1
-        
-        # Empty list for next iteration
-        if i!=lengthX-1:
-            prev = current      # list is copied by reference
-            current = [i+2]     # no longer copied by reference
-
-    return current[-1]
+    current = [None] * len_trie
+    prev = [None] * len_trie 
+    current[0] = 0
+    for st in range(1,len_trie):
+        current[st] = current[trie.get_parent(st)] + 1
+    for ch in x :
+        current , prev = prev, current
+        current[0] = prev[0]+1
+        for st in range(1,len_trie):
+            father = trie.get_parent(st)
+            current[st] = min(prev[st]+1,current[father]+1,prev[father] + (ch != trie.get_label(st)) )
+        if(min(current) > th) : return res
+    for st in range(1,len_trie):
+        if trie.is_final(st) and current[st] <= th:
+            res[trie.get_output(st)] = current[st]
+    return res
 
 #############################################################################################
 #    Restricted Damerau-Levenstein Trie Distance
 #############################################################################################
 def dp_restricted_damerau_trie(x, trie, th) :
+    return []
     lenx = len(x); leny = len(y) # x and y string length
     
     # current, prev1 y prev2 prev2 will efficiently store the distances 
@@ -55,6 +57,7 @@ def dp_restricted_damerau_trie(x, trie, th) :
 #    Intermediate Damerau-Levenstein Trie Distance
 #############################################################################################
 def dp_intermediate_damerau_trie(x, trie, th) :
+    return []
     lenx = len(x); leny = len(y)
     cte = 1 # constant preset to 1 considering cost(acb, ba)=2 and cost(ab, bca)=2
 
