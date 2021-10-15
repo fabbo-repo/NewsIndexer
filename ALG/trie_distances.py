@@ -5,7 +5,7 @@ from trie import Trie
 #############################################################################################
 def dp_levenshtein_trie(x, trie, th) :
     lengthX = len(x)
-    lengthY = len(y)     # m
+    lengthY = trie.get_num_states()
 
     # Initialize 1st column of the array to [0,1,2,...,m]
     prev = [i for i in range(lengthY+1)]
