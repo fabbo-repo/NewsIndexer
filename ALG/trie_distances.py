@@ -1,12 +1,11 @@
+from trie import Trie
+
 #############################################################################################
-#    Levenstein Distance with threshold 
+#    Levenstein Trie Distance
 #############################################################################################
-def dp_levenshtein_threshold(x, y, th):
-        
+def dp_levenshtein_trie(x, trie, th) :
     lengthX = len(x)
     lengthY = len(y)     # m
-    
-    if(abs(lengthY-lengthX) > th) : return th+1
 
     # Initialize 1st column of the array to [0,1,2,...,m]
     prev = [i for i in range(lengthY+1)]
@@ -27,12 +26,10 @@ def dp_levenshtein_threshold(x, y, th):
     return current[-1]
 
 #############################################################################################
-#    Restricted Damerau-Levenstein Distance with threshold 
+#    Restricted Damerau-Levenstein Trie Distance
 #############################################################################################
-def dp_restricted_damerau_threshold(x, y, th):
+def dp_restricted_damerau_trie(x, trie, th) :
     lenx = len(x); leny = len(y) # x and y string length
-    
-    if(abs(leny-lenx) > th) : return th+1
     
     # current, prev1 y prev2 prev2 will efficiently store the distances 
     # of each character 
@@ -55,13 +52,11 @@ def dp_restricted_damerau_threshold(x, y, th):
     return current[-1]
 
 #############################################################################################
-#    Intermediate Damerau-Levenstein Distance with threshold 
+#    Intermediate Damerau-Levenstein Trie Distance
 #############################################################################################
-def dp_intermediate_damerau_threshold(x, y, th):
+def dp_intermediate_damerau_trie(x, trie, th) :
     lenx = len(x); leny = len(y)
     cte = 1 # constant preset to 1 considering cost(acb, ba)=2 and cost(ab, bca)=2
-
-    if(abs(leny-lenx) > th) : return th+1
 
     # In this case prev3 is needed to store extra distances
     prev2 = []; prev1 = []; current = []
@@ -94,50 +89,47 @@ def dp_intermediate_damerau_threshold(x, y, th):
 #############################################################################################
 #    Tests:
 #############################################################################################
-test = [
-        ("algoritmo","algortimo"),
-        ("algoritmo","algortximo"),
-        ("algoritmo","lagortimo"),
-        ("algoritmo","agaloritom"),
-        ("algoritmo","algormio"),
-        ("acb","ba")
-        ]
+words = ["algortimo", "algortximo","lagortimo", "agaloritom", "algormio", "ba"]
+words.sort()
+trie = Trie(words)
 
-thrs = range(1,4)
+test = ["algoritmo", "acb"]
+thrs = range(1, 4)
 
 for threshold in thrs:
-    print(f"thresholds: {threshold:3}")
-    for x,y in test:
-        print(f"{x:12} {y:12} \t",end="")
-        for dist,name in ((dp_levenshtein_threshold,"levenshtein"),
-                          (dp_restricted_damerau_threshold,"restricted"),
-                          (dp_intermediate_damerau_threshold,"intermediate")):
-        
-            print(f" {name} {dist(x,y,threshold):2}",end="")
-        print()
+    print(f"threshols: {threshold:3}")
+    for x in test:
+        for dist,name in (
+                    (dp_levenshtein_trie,"levenshtein"),
+                    (dp_restricted_damerau_trie,"restricted"),
+                    (dp_intermediate_damerau_trie,"intermediate"),
+                    ):
+            print(f"\t{x:12} \t{name}\t", end="")
+            print(dist(x, trie, threshold))
                  
 """
 Salida del programa:
 
-thresholds:   1
-algoritmo    algortimo    	 levenshtein  2 restricted  1 intermediate  1
-algoritmo    algortximo   	 levenshtein  2 restricted  2 intermediate  2
-algoritmo    lagortimo    	 levenshtein  2 restricted  2 intermediate  2
-algoritmo    agaloritom   	 levenshtein  2 restricted  2 intermediate  2
-algoritmo    algormio     	 levenshtein  2 restricted  2 intermediate  2
-acb          ba           	 levenshtein  2 restricted  2 intermediate  2   (levenshtein puede dar 3 por el return)
-thresholds:   2
-algoritmo    algortimo    	 levenshtein  2 restricted  1 intermediate  1
-algoritmo    algortximo   	 levenshtein  3 restricted  3 intermediate  2
-algoritmo    lagortimo    	 levenshtein  3 restricted  2 intermediate  2
-algoritmo    agaloritom   	 levenshtein  3 restricted  3 intermediate  3
-algoritmo    algormio     	 levenshtein  3 restricted  3 intermediate  2
-acb          ba           	 levenshtein  3 restricted  3 intermediate  2
-thresholds:   3
-algoritmo    algortimo    	 levenshtein  2 restricted  1 intermediate  1
-algoritmo    algortximo   	 levenshtein  3 restricted  3 intermediate  2
-algoritmo    lagortimo    	 levenshtein  4 restricted  2 intermediate  2
-algoritmo    agaloritom   	 levenshtein  4 restricted  4 intermediate  3
-algoritmo    algormio     	 levenshtein  3 restricted  3 intermediate  2
-acb          ba           	 levenshtein  3 restricted  3 intermediate  2
+threshols:   1
+	algoritmo    	levenshtein	[]
+	algoritmo    	restricted	[('algortimo', 1)]
+	algoritmo    	intermediate	[('algortimo', 1)]
+	acb          	levenshtein	[]
+	acb          	restricted	[]
+	acb          	intermediate	[]
+threshols:   2
+	algoritmo    	levenshtein	[('algortimo', 2)]
+	algoritmo    	restricted	[('algortimo', 1), ('lagortimo', 2)]
+	algoritmo    	intermediate	[('algormio', 2), ('algortimo', 1), ('lagortimo', 2), ('algortximo', 2)]
+	acb          	levenshtein	[]
+	acb          	restricted	[]
+	acb          	intermediate	[('ba', 2)]
+threshols:   3
+	algoritmo    	levenshtein	[('algormio', 3), ('algortimo', 2), ('algortximo', 3)]
+	algoritmo    	restricted	[('algormio', 3), ('algortimo', 1), ('lagortimo', 2), ('algortximo', 3)]
+	algoritmo    	intermediate	[('algormio', 2), ('algortimo', 1), ('lagortimo', 2), ('agaloritom', 3), ('algortximo', 2)]
+	acb          	levenshtein	[('ba', 3)]
+	acb          	restricted	[('ba', 3)]
+	acb          	intermediate	[('ba', 2)]
+
 """         

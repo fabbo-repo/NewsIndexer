@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import re
-
+import threshold_distances as distan
 from trie import Trie
+import sys
 
 class SpellSuggester:
 
@@ -38,11 +39,26 @@ class SpellSuggester:
             vocab.discard('') # por si acaso
             return sorted(vocab)
 
-    def suggest(self, term, distance="levenshtein", threshold=None):
+    def count_distance(self, word1, word2) :
+            distance = 0; lista=[]; d1=d2={}
+            for c in word1: 
+                if c not in d1 : d1[c]=1
+                else: d1[c]+=1
+
+            for c in word2: 
+                if c not in d2 : d2[c]=1
+                else: d2[c]+=1
+
+            for c in lista: 
+                if c in d1 and c in d2 and d1[c] != d2[c]: distance += abs(d1[c]-d2[c])
+                elif c not in d1: distance += d2[c]
+                elif c not in d2: distance += d1[c]
+            
+            return distance
+
+    def suggest(self, term, distance="levenshtein", threshold=2):
 
         """Método para sugerir palabras similares siguiendo la tarea 3.
-
-        A completar.
 
         Args:
             term (str): término de búsqueda.
@@ -52,11 +68,44 @@ class SpellSuggester:
                 puede utilizarse con los algoritmos de distancia mejorada de la tarea 2
                 o filtrando la salida de las distancias de la tarea 2
         """
-        assert distance in ["levenshtein", "restricted", "intermediate"]
 
+        assert distance in ["levenshtein", "restricted", "intermediate"]
+        
         results = {} # diccionario termino:distancia
-        # TODO
+        # Saving the length of the term
+        lengthAuxiliar = len(term)
+        # Check the type of edit distance its given
+        if distance == 'levenshtein':
+            callAux =  distan.dp_levenshtein_threshold
+        elif distance == 'restricted':
+            callAux = distan.dp_restricted_damerau_threshold
+        elif distance == 'intermediate':
+            callAux = distan.dp_intermediate_damerau_threshold
+        
+        # Loop to check the distance between each word on the vocabulary 
+        # and the term we have on the arguments
+        for word in self.vocabulary:
+            # Optimistic level of difference between lengths
+            if(abs(len(word)-len(term)) > threshold) : 
+                distancia = threshold+1
+            # Optimistic level based on the number of ocurrences of each character
+            elif(distance == 'levenshtein' and \
+                self.count_distance(word,term) > threshold) : 
+                distancia = threshold+1
+            else : 
+                distancia = callAux(word,term,threshold)
+            
+            # Check if the actual distance is lower than the threshold, 
+            # if not, get the next word
+            if distancia <= threshold:
+                if word in results:
+                    results[word].append(distancia)
+                else:
+                    results[word] = distancia
+        
         return results
+
+    
 
 class TrieSpellSuggester(SpellSuggester):
     """
@@ -67,8 +116,11 @@ class TrieSpellSuggester(SpellSuggester):
         self.trie = Trie(self.vocabulary)
     
 if __name__ == "__main__":
-    spellsuggester = TrieSpellSuggester("./corpora/quijote.txt")
-    print(spellsuggester.suggest("alábese"))
-    # cuidado, la salida es enorme print(suggester.trie)
-
-    
+    try:
+        path = sys.argv[1]
+        spellsuggester = TrieSpellSuggester(path)
+        print(spellsuggester.suggest("casa"))
+        # cuidado, la salida es enorme print(suggester.trie)
+    except Exception as err:
+        print("\n spellsuggest class error :",sys.exc_info[0])
+        sys.exit(-1)
