@@ -5,6 +5,7 @@ import basic_distances as basic_distan
 import threshold_distances as thres_distan
 import trie_distances as trie_distan
 from trie import Trie
+from spellsuggest import SpellSuggester, TrieSpellSuggester
 import sys
 import time
 
@@ -131,51 +132,40 @@ if __name__ == "__main__":
             exit()
 
         path = sys.argv[1]
-
         # list of thresholds
-        thresholds = sys.argv[2].strip('][').split(', ')    # Convert a string representation of list into list
+        thresholds = sys.argv[2].strip('][').split(',')    # Convert a string representation of list into list
 
-        # Esto son valores random porque no se
-        # como de grande va a ser el diccionario
-        tallas = [5,5**2,5**3,5**4,5**5]
-
-        # Los nombres de los algoritmos están mal, creo
-        ###TODO CAMBIAR NOMBRES DE LOS ALGORITMOS A COMO LOS TENGAMOS LLAMADOS###
-        ###                 EN TODO EL CODIGO                                 ###
-        algoritmos ={
-            "levenshtein":{},
-            "restricted": {},
-            "intermediate":{},
-            "levenshtein_threshold":{},
-            "restricted_threshold":{},
-            "intermediate_threshold":{},
-            "trielevenshtein":{}
-        }
+        spellsuggester = SpellSuggester(path)
+        spellsuggester_trie = TrieSpellSuggester(path)
         
-        for talla in tallas:
-            #Inicializamos para cada algoritmo para
-            #cada talla vacío.
-            algoritmos["levenshtein"][talla] = [] #Aquí no se si todo son listas o serían diccionarios {}...
-            algoritmos["restricted"][talla] = []
-            algoritmos["intermediate"][talla] = []
-            algoritmos["levenshtein_threshold"][talla] = [] 
-            algoritmos["restricted_threshold"][talla] = []
-            algoritmos["intermediate_threshold"][talla] = []
-            #TODO implementar levenstein-trie
-            for thre in thresholds:
-                algoritmos["levenshtein"][talla][thre] = [] #Lo mismo, ni idea si sería {} o []
-                algoritmos["restricted"][talla][thre] = []
-                algoritmos["intermediate"][talla][thre] = []
-                algoritmos["levenshtein_threshold"][talla][thre] = []
-                algoritmos["restricted_threshold"][talla][thre] = []
-                algoritmos["intermediate_threshold"][talla][thre] = []
-                #Ya no se como continuar xddddddddd
-                #TODO implementar continuación y
-                #El trie
+        for thres in thresholds:
+            
+            print( "threshold " + thres)
+            #Levenstein
+            init_t_lev = time.process_time()
+            res = spellsuggester.suggest("casa", "levenshtein", int(thres))
+            end_t_lev = time.process_time()
+            
+            #Restricted
+            init_t_res = time.process_time()
+            res = spellsuggester.suggest("casa", "restricted", int(thres))
+            end_t_res = time.process_time()
+            
+            #intermediate
+            init_t_int = time.process_time()
+            res = spellsuggester.suggest("casa", "intermediate", int(thres))
+            end_t_int = time.process_time()
+            
+            #trielevenshtein
+            init_t_trie = time.process_time()
+            res = spellsuggester_trie.suggest("casa", "trielevenshtein", int(thres))
+            end_t_trie = time.process_time()
+            
+            print("levenstein : " + str(end_t_lev - init_t_lev ) + "\n"
+                  "restricted : " + str(end_t_res - init_t_res) + "\n"
+                  "intermediate : " + str(end_t_int - init_t_int) + "\n"
+                  "trielevenshtein : " + str(end_t_trie - init_t_trie))
 
-        #Asumo que este spellsuggester no sirve.       
-        spellsuggester = TimeSpellSuggester(path, 10)
-        # print(spellsuggester.suggest("casa",option))
     except Exception as err:
         print("\n spellsuggest class error :",sys.exc_info[0])
         sys.exit(-1)
