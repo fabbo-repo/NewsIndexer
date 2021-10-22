@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import re
 import threshold_distances as distan
+import trie_distances as trie_distan
 from trie import Trie
 import sys
 
@@ -69,11 +70,9 @@ class SpellSuggester:
                 o filtrando la salida de las distancias de la tarea 2
         """
 
-        assert distance in ["levenshtein", "restricted", "intermediate"]
+        assert distance in ["levenshtein", "restricted", "intermediate","trielevenshtein"]
         
         results = {} # diccionario termino:distancia
-        # Saving the length of the term
-        lengthAuxiliar = len(term)
         # Check the type of edit distance its given
         if distance == 'levenshtein':
             callAux =  distan.dp_levenshtein_threshold
@@ -81,6 +80,8 @@ class SpellSuggester:
             callAux = distan.dp_restricted_damerau_threshold
         elif distance == 'intermediate':
             callAux = distan.dp_intermediate_damerau_threshold
+        elif distance == "trielevenshtein" :
+            return trie_distan.dp_levenshtein_trie(term, self.trie, threshold)
         
         # Loop to check the distance between each word on the vocabulary 
         # and the term we have on the arguments
@@ -117,9 +118,13 @@ class TrieSpellSuggester(SpellSuggester):
     
 if __name__ == "__main__":
     try:
+        if(len(sys.argv) != 3) :
+            print('Faltan argumentos, deben ser 2:\n1- path del fichero a analizar\n2- distancia a usar')
+            exit()
         path = sys.argv[1]
+        option = sys.argv[2]
         spellsuggester = TrieSpellSuggester(path)
-        print(spellsuggester.suggest("casa"))
+        print(spellsuggester.suggest("casa",option))
         # cuidado, la salida es enorme print(suggester.trie)
     except Exception as err:
         print("\n spellsuggest class error :",sys.exc_info[0])
