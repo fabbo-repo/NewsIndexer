@@ -80,20 +80,21 @@ def dp_intermediate_damerau_backwards(x, y) :
 #############################################################################################
 #    Tests:
 #############################################################################################
-test = [("algoritmo","algortimo"),
-        ("algoritmo","algortximo"),
-        ("algoritmo","lagortimo"),
-        ("algoritmo","agaloritom"),
-        ("algoritmo","algormio"),
-        ("acb","ba")]
+if __name__ == "__main__":
+    test = [("algoritmo","algortimo"),
+            ("algoritmo","algortximo"),
+            ("algoritmo","lagortimo"),
+            ("algoritmo","agaloritom"),
+            ("algoritmo","algormio"),
+            ("acb","ba")]
 
-for x,y in test:
-    print(f"{x:12} {y:12}",end="")
-    for dist,name in ((dp_levenshtein_backwards,"levenshtein"),
-                      (dp_restricted_damerau_backwards,"restricted"),
-                      (dp_intermediate_damerau_backwards,"intermediate")):
-        print(f" {name} {dist(x,y):2}",end="")
-    print()
+    for x,y in test:
+        print(f"{x:12} {y:12}",end="")
+        for dist,name in ((dp_levenshtein_backwards,"levenshtein"),
+                        (dp_restricted_damerau_backwards,"restricted"),
+                        (dp_intermediate_damerau_backwards,"intermediate")):
+            print(f" {name} {dist(x,y):2}",end="")
+        print()
                  
 """
 Salida del programa:

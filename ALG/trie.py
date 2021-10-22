@@ -162,5 +162,3 @@ if __name__ == "__main__":
     vocabulario = ['a', 'ata', 'ato', 'cama', 'casa', 'caso', 'casó', 'caña']
     trie = Trie(vocabulario)
     print(trie)
-
-

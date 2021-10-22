@@ -64,7 +64,7 @@ class SpellSuggester:
         Args:
             term (str): término de búsqueda.
             distance (str): algoritmo de búsqueda a utilizar
-                {"levenshtein", "restricted", "intermediate"}.
+                {"levenshtein", "restricted", "intermediate", "trielevenshtein"}.
             threshold (int): threshold para limitar la búsqueda
                 puede utilizarse con los algoritmos de distancia mejorada de la tarea 2
                 o filtrando la salida de las distancias de la tarea 2
@@ -119,7 +119,12 @@ class TrieSpellSuggester(SpellSuggester):
 if __name__ == "__main__":
     try:
         if(len(sys.argv) != 3) :
-            print('Faltan argumentos, deben ser 2:\n1- path del fichero a analizar\n2- distancia a usar')
+            print('\nFaltan argumentos, deben ser 2:\
+                \n\t1- path del fichero a analizar\
+                \n\t2- distancia a usar \
+                (levenshtein, restricted, intermediate, trielevenshtein)\
+                \n\nPrueba con:\
+                \n\tpython spellsuggest.py ../corpora/quijote.txt levenshtein\n')
             exit()
         path = sys.argv[1]
         option = sys.argv[2]

@@ -87,27 +87,28 @@ def dp_intermediate_damerau_threshold(x, y, th) :
 #############################################################################################
 #    Tests:
 #############################################################################################
-test = [
-        ("algoritmo","algortimo"),
-        ("algoritmo","algortximo"),
-        ("algoritmo","lagortimo"),
-        ("algoritmo","agaloritom"),
-        ("algoritmo","algormio"),
-        ("acb","ba")
-        ]
+if __name__ == "__main__":
+    test = [
+            ("algoritmo","algortimo"),
+            ("algoritmo","algortximo"),
+            ("algoritmo","lagortimo"),
+            ("algoritmo","agaloritom"),
+            ("algoritmo","algormio"),
+            ("acb","ba")
+            ]
 
-thrs = range(1,4)
+    thrs = range(1,4)
 
-for threshold in thrs:
-    print(f"thresholds: {threshold:3}")
-    for x,y in test:
-        print(f"{x:12} {y:12} \t",end="")
-        for dist,name in ((dp_levenshtein_threshold,"levenshtein"),
-                          (dp_restricted_damerau_threshold,"restricted"),
-                          (dp_intermediate_damerau_threshold,"intermediate")):
-        
-            print(f" {name} {dist(x,y,threshold):2}",end="")
-        print()
+    for threshold in thrs:
+        print(f"thresholds: {threshold:3}")
+        for x,y in test:
+            print(f"{x:12} {y:12} \t",end="")
+            for dist,name in ((dp_levenshtein_threshold,"levenshtein"),
+                            (dp_restricted_damerau_threshold,"restricted"),
+                            (dp_intermediate_damerau_threshold,"intermediate")):
+            
+                print(f" {name} {dist(x,y,threshold):2}",end="")
+            print()
                  
 """
 Salida del programa:
