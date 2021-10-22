@@ -131,11 +131,15 @@ if __name__ == "__main__":
             exit()
 
         path = sys.argv[1]
-        thresholds = sys.argv[2]
-        #Esto son valores random porque no se
-        #como de grande va a ser el diccionario
+
+        # list of thresholds
+        thresholds = sys.argv[2].strip('][').split(', ')    # Convert a string representation of list into list
+
+        # Esto son valores random porque no se
+        # como de grande va a ser el diccionario
         tallas = [5,5**2,5**3,5**4,5**5]
-        #Los nombres de los algoritmos están mal, creo
+
+        # Los nombres de los algoritmos están mal, creo
         ###TODO CAMBIAR NOMBRES DE LOS ALGORITMOS A COMO LOS TENGAMOS LLAMADOS###
         ###                 EN TODO EL CODIGO                                 ###
         algoritmos ={
@@ -144,11 +148,9 @@ if __name__ == "__main__":
             "intermediate":{},
             "levenshtein_threshold":{},
             "restricted_threshold":{},
-            "intermediate_threshold":{}
-            #TODO implementar el levenstein-trie
+            "intermediate_threshold":{},
+            "trielevenshtein":{}
         }
-        #Distintos valores de threshold, tomados random
-        thresholds = [1,2,3,4,5,6]
         
         for talla in tallas:
             #Inicializamos para cada algoritmo para
