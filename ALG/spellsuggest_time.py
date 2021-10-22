@@ -132,9 +132,46 @@ if __name__ == "__main__":
 
         path = sys.argv[1]
         thresholds = sys.argv[2]
-
+        #Esto son valores random porque no se
+        #como de grande va a ser el diccionario
+        tallas = [5,5**2,5**3,5**4,5**5]
+        #Los nombres de los algoritmos están mal, creo
+        ###TODO CAMBIAR NOMBRES DE LOS ALGORITMOS A COMO LOS TENGAMOS LLAMADOS###
+        ###                 EN TODO EL CODIGO                                 ###
+        algoritmos ={
+            "levenshtein":{},
+            "restricted": {},
+            "intermediate":{},
+            "levenshtein_threshold":{},
+            "restricted_threshold":{},
+            "intermediate_threshold":{}
+            #TODO implementar el levenstein-trie
+        }
+        #Distintos valores de threshold, tomados random
+        thresholds = [1,2,3,4,5,6]
         
+        for talla in tallas:
+            #Inicializamos para cada algoritmo para
+            #cada talla vacío.
+            algoritmos["levenshtein"][talla] = [] #Aquí no se si todo son listas o serían diccionarios {}...
+            algoritmos["restricted"][talla] = []
+            algoritmos["intermediate"][talla] = []
+            algoritmos["levenshtein_threshold"][talla] = [] 
+            algoritmos["restricted_threshold"][talla] = []
+            algoritmos["intermediate_threshold"][talla] = []
+            #TODO implementar levenstein-trie
+            for thre in thresholds:
+                algoritmos["levenshtein"][talla][thre] = [] #Lo mismo, ni idea si sería {} o []
+                algoritmos["restricted"][talla][thre] = []
+                algoritmos["intermediate"][talla][thre] = []
+                algoritmos["levenshtein_threshold"][talla][thre] = []
+                algoritmos["restricted_threshold"][talla][thre] = []
+                algoritmos["intermediate_threshold"][talla][thre] = []
+                #Ya no se como continuar xddddddddd
+                #TODO implementar continuación y
+                #El trie
 
+        #Asumo que este spellsuggester no sirve.       
         spellsuggester = TimeSpellSuggester(path, 10)
         # print(spellsuggester.suggest("casa",option))
     except Exception as err:
