@@ -8,6 +8,7 @@ from trie import Trie
 from spellsuggest import SpellSuggester, TrieSpellSuggester
 import sys
 import time
+import random
 
 def dummy_function() :
     pass
@@ -138,33 +139,34 @@ if __name__ == "__main__":
         spellsuggester = SpellSuggester(path)
         spellsuggester_trie = TrieSpellSuggester(path)
         
+        palabras = random.choices(spellsuggester_trie.vocabulary, k = 10)
         for thres in thresholds:
+            for palabra in palabras:
+                print( "threshold " + thres + " " + palabra)
+                #Levenstein
+                init_t_lev = time.process_time()
+                res = spellsuggester.suggest(palabra, "levenshtein", int(thres))
+                end_t_lev = time.process_time()
             
-            print( "threshold " + thres)
-            #Levenstein
-            init_t_lev = time.process_time()
-            res = spellsuggester.suggest("casa", "levenshtein", int(thres))
-            end_t_lev = time.process_time()
+                #Restricted
+                init_t_res = time.process_time()
+                res = spellsuggester.suggest(palabra, "restricted", int(thres))
+                end_t_res = time.process_time()
             
-            #Restricted
-            init_t_res = time.process_time()
-            res = spellsuggester.suggest("casa", "restricted", int(thres))
-            end_t_res = time.process_time()
+                #intermediate
+                init_t_int = time.process_time()
+                res = spellsuggester.suggest(palabra, "intermediate", int(thres))
+                end_t_int = time.process_time()
+
+                #trielevenshtein
+                init_t_trie = time.process_time()
+                res = spellsuggester_trie.suggest(palabra, "trielevenshtein", int(thres))
+                end_t_trie = time.process_time()
             
-            #intermediate
-            init_t_int = time.process_time()
-            res = spellsuggester.suggest("casa", "intermediate", int(thres))
-            end_t_int = time.process_time()
-            
-            #trielevenshtein
-            init_t_trie = time.process_time()
-            res = spellsuggester_trie.suggest("casa", "trielevenshtein", int(thres))
-            end_t_trie = time.process_time()
-            
-            print("levenstein : " + str(end_t_lev - init_t_lev ) + "\n"
-                  "restricted : " + str(end_t_res - init_t_res) + "\n"
-                  "intermediate : " + str(end_t_int - init_t_int) + "\n"
-                  "trielevenshtein : " + str(end_t_trie - init_t_trie))
+                print("levenstein : " + palabra + " " +str(end_t_lev - init_t_lev ) + "\n"
+                      "restricted : " + palabra + " " + str(end_t_res - init_t_res) + "\n"
+                      "intermediate : "+ palabra + " "  + str(end_t_int - init_t_int) + "\n"
+                      "trielevenshtein : "+ palabra + " "  + str(end_t_trie - init_t_trie))
 
     except Exception as err:
         print("\n spellsuggest class error :",sys.exc_info[0])

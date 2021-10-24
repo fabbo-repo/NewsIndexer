@@ -12,7 +12,7 @@ class SpellSuggester:
     """
 
     def __init__(self, vocab_file_path):
-        """Método constructor de la clase SpellSuggester
+        """Método constructor de la clase Spelluggester
 
         Construye una lista de términos únicos (vocabulario),
         que además se utiliza para crear un trie.
