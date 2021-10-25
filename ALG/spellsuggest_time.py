@@ -139,34 +139,30 @@ if __name__ == "__main__":
         spellsuggester = SpellSuggester(path)
         spellsuggester_trie = TrieSpellSuggester(path)
         
-        palabras = random.choices(spellsuggester_trie.vocabulary, k = 10)
-        for thres in thresholds:
-            for palabra in palabras:
-                print( "threshold " + thres + " " + palabra)
-                #Levenstein
-                init_t_lev = time.process_time()
-                res = spellsuggester.suggest(palabra, "levenshtein", int(thres))
-                end_t_lev = time.process_time()
-            
-                #Restricted
-                init_t_res = time.process_time()
-                res = spellsuggester.suggest(palabra, "restricted", int(thres))
-                end_t_res = time.process_time()
-            
-                #intermediate
-                init_t_int = time.process_time()
-                res = spellsuggester.suggest(palabra, "intermediate", int(thres))
-                end_t_int = time.process_time()
+        # k words are chosen randomly, without repeating them
+        words = random.sample(spellsuggester_trie.vocabulary, k = 10)
 
-                #trielevenshtein
-                init_t_trie = time.process_time()
-                res = spellsuggester_trie.suggest(palabra, "trielevenshtein", int(thres))
-                end_t_trie = time.process_time()
-            
-                print("levenstein : " + palabra + " " +str(end_t_lev - init_t_lev ) + "\n"
-                      "restricted : " + palabra + " " + str(end_t_res - init_t_res) + "\n"
-                      "intermediate : "+ palabra + " "  + str(end_t_int - init_t_int) + "\n"
-                      "trielevenshtein : "+ palabra + " "  + str(end_t_trie - init_t_trie))
+        t_lev = t_res = t_int = t_trie = 0
+        for thres in thresholds:
+            print( "\n### Threshold " + thres + " ")
+            for w in words:
+                # Levenstein
+                t_lev += measure_time(spellsuggester.suggest,
+                        [w, "levenshtein", int(thres)])[0]
+                # Restricted
+                t_res += measure_time(spellsuggester.suggest,
+                        [w, "restricted", int(thres)])[0]
+                # Intermediate
+                t_int += measure_time(spellsuggester.suggest,
+                        [w, "intermediate", int(thres)])[0]
+                # Trielevenshtein
+                t_trie += measure_time(spellsuggester_trie.suggest, 
+                        [w, "trielevenshtein", int(thres)])[0]
+
+            print("* levenstein average: " +str(t_lev/len(words)) + "\n"
+                    "* restricted average: " + str(t_res/len(words)) + "\n"
+                    "* intermediate average: "  + str(t_int/len(words)) + "\n"
+                    "* trielevenshtein average: "  + str(t_trie/len(words)) + "\n")
 
     except Exception as err:
         print("\n spellsuggest class error :",sys.exc_info[0])
