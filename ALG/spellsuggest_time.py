@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
 import re
 import collections
-import basic_distances as basic_distan
 import threshold_distances as thres_distan
 import trie_distances as trie_distan
 from trie import Trie
-from spellsuggest import SpellSuggester, TrieSpellSuggester
 import sys
 import time
 import random
@@ -37,12 +35,13 @@ def measure_time(function, arguments, prepare = dummy_function, prepare_args=())
 
 class TimeSpellSuggester:
 
-    def __init__(self, vocab_file_path, talla):
+    def __init__(self, vocab_file_path, talla=10):
         """Método constructor de la clase SpellSuggester
         Construye una lista de términos únicos (vocabulario),
         que además se utiliza para crear un trie.
         Args:
             vocab_file (str): ruta del fichero de texto para cargar el vocabulario.
+            talla: talla del vocabulario a usar
         """
 
         tokenizer = re.compile("\W+")
@@ -55,13 +54,13 @@ class TimeSpellSuggester:
             sorted_reversed = sorted(reversed_c, reverse=True)
             sorted_vocab = [word for (freq,word) in sorted_reversed]
         
-        self.vocabulary = sorted_vocab
-        self.reduced_vocabulary = self.vocabulary[0:talla]
-        self.trie = Trie(sorted(self.sorted_vocabulary))
+        self.vocabulary = self.sorted_vocab[0:talla]
+        self.trie = Trie(sorted(self.vocabulary))
 
-    def suggest(self, term, distance="levenshtein", threshold=2, use_thres=True):
+    def suggest(self, term, distance="levenshtein", threshold=2):
 
         """Método para sugerir palabras similares siguiendo la tarea 3.
+
         Args:
             term (str): término de búsqueda.
             distance (str): algoritmo de búsqueda a utilizar
@@ -69,42 +68,33 @@ class TimeSpellSuggester:
             threshold (int): threshold para limitar la búsqueda
                 puede utilizarse con los algoritmos de distancia mejorada de la tarea 2
                 o filtrando la salida de las distancias de la tarea 2
-            use_thres (bool): indica si va a usar o no el threshold
         """
 
         assert distance in ["levenshtein", "restricted", "intermediate","trielevenshtein"]
         
         results = {} # diccionario termino:distancia
         # Check the type of edit distance its given
-        if distance == 'levenshtein' and not use_thres:
-            callAux =  basic_distan.dp_levenshtein_backwards
-        elif distance == 'restricted' and not use_thres:
-            callAux = basic_distan.dp_restricted_damerau_backwards
-        elif distance == 'intermediate' and not use_thres:
-            callAux = basic_distan.dp_intermediate_damerau_backwards
-        if distance == 'levenshtein' and use_thres:
+        if distance == 'levenshtein':
             callAux =  thres_distan.dp_levenshtein_threshold
-        elif distance == 'restricted' and use_thres:
+        elif distance == 'restricted':
             callAux = thres_distan.dp_restricted_damerau_threshold
-        elif distance == 'intermediate' and use_thres:
+        elif distance == 'intermediate':
             callAux = thres_distan.dp_intermediate_damerau_threshold
-        elif distance == "trielevenshtein"  and use_thres:
+        elif distance == "trielevenshtein" :
             return trie_distan.dp_levenshtein_trie(term, self.trie, threshold)
         
         # Loop to check the distance between each word on the vocabulary 
         # and the term we have on the arguments
         for word in self.vocabulary:
             # Optimistic level of difference between lengths
-            if(use_thres and abs(len(word)-len(term)) > threshold) : 
+            if(abs(len(word)-len(term)) > threshold) : 
                 distancia = threshold+1
             # Optimistic level based on the number of ocurrences of each character
-            elif(use_thres and distance == 'levenshtein' and \
+            elif(distance == 'levenshtein' and \
                 self.count_distance(word,term) > threshold) : 
                 distancia = threshold+1
-            elif(use_thres) : 
-                distancia = callAux(word,term,threshold)
             else : 
-                distancia = callAux(word,term)
+                distancia = callAux(word,term,threshold)
             
             # Check if the actual distance is lower than the threshold, 
             # if not, get the next word
@@ -115,7 +105,6 @@ class TimeSpellSuggester:
                     results[word] = distancia
         
         return results
-
 
 """
     Different threshold values, random words and sizes are used to measure time. 
@@ -137,11 +126,10 @@ if __name__ == "__main__":
         # list of thresholds
         thresholds = sys.argv[2].strip('][').split(',')    # Convert a string representation of list into list
 
-        spellsuggester = SpellSuggester(path)
-        triespellsuggester = TrieSpellSuggester(path)
+        time_spellsuggester = TimeSpellSuggester(path)
         
         # k words are chosen randomly, without repeating them
-        words = random.sample(spellsuggester.vocabulary, k = 10)
+        words = random.sample(time_spellsuggester.vocabulary, k = 10)
 
         # These variables refer to the sum of the times for each distance using thresholds
         t_lev = {}; t_res = {}; t_int = {}; t_trie = {}
@@ -150,16 +138,16 @@ if __name__ == "__main__":
             print( "\n### Threshold " + thres + " ")
             for w in words:
                 # Levenstein
-                t_lev[thres] += measure_time(spellsuggester.suggest,
+                t_lev[thres] += measure_time(time_spellsuggester.suggest,
                         [w, "levenshtein", int(thres)])[0]
                 # Restricted
-                t_res[thres] += measure_time(spellsuggester.suggest,
+                t_res[thres] += measure_time(time_spellsuggester.suggest,
                         [w, "restricted", int(thres)])[0]
                 # Intermediate
-                t_int[thres] += measure_time(spellsuggester.suggest,
+                t_int[thres] += measure_time(time_spellsuggester.suggest,
                         [w, "intermediate", int(thres)])[0]
                 # Trielevenshtein
-                t_trie[thres] += measure_time(triespellsuggester.suggest, 
+                t_trie[thres] += measure_time(time_spellsuggester.suggest, 
                         [w, "trielevenshtein", int(thres)])[0]
 
             print("* levenstein average: " +str(t_lev[thres]/len(words)) + "\n"
