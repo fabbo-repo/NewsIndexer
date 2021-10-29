@@ -54,8 +54,25 @@ class TimeSpellSuggester:
             sorted_reversed = sorted(reversed_c, reverse=True)
             sorted_vocab = [word for (freq,word) in sorted_reversed]
         
-        self.vocabulary = self.sorted_vocab[0:size]
+        self.vocabulary = sorted_vocab[0:size]
         self.trie = Trie(sorted(self.vocabulary))
+
+    def count_distance(self, word1, word2) :
+        distance = 0; lista=[]; d1=d2={}
+        for c in word1: 
+            if c not in d1 : d1[c]=1
+            else: d1[c]+=1
+
+        for c in word2: 
+            if c not in d2 : d2[c]=1
+            else: d2[c]+=1
+
+        for c in lista: 
+            if c in d1 and c in d2 and d1[c] != d2[c]: distance += abs(d1[c]-d2[c])
+            elif c not in d1: distance += d2[c]
+            elif c not in d2: distance += d1[c]
+            
+        return distance
 
     def suggest(self, term, distance="levenshtein", threshold=2):
 
@@ -114,48 +131,54 @@ class TimeSpellSuggester:
 if __name__ == "__main__":
     try:
         if(len(sys.argv) != 4) :
-            print('\nFaltan argumentos, deben ser 2:\
+            print(len(sys.argv))
+            print('\nFaltan argumentos, deben ser 3:\
                 \n\t1- path del fichero a analizar\
                 \n\t2- lista de thresholds ( [1,2,3,4,...] ) \
-                \n\t3- lista de tallas ( [..., 500, 1000, 1500, ...] ) \
+                \n\t3- lista de tallas ( [...,500,1000,1500,...] ) \
                 (levenshtein, restricted, intermediate, trielevenshtein)\
                 \n\nPrueba con:\
-                \n\tpython spellsuggest_time.py ../corpora/quijote.txt [1,2,3,4,5] [100, 500, 1000, 1500]\n')
+                \n\tpython spellsuggest_time.py ../corpora/quijote.txt [1,2,3,4,5] [100,500,1000,1500]\n')
             exit()
 
         path = sys.argv[1]
         # list of thresholds
         thresholds = sys.argv[2].strip('][').split(',')    # Convert a string representation of list into list
-        size = sys.argv[3]
-
-        time_spellsuggester = TimeSpellSuggester(path, size)
-        
-        # k words are chosen randomly, without repeating them
-        words = random.sample(time_spellsuggester.vocabulary, k = 10)
+        sizes = sys.argv[3].strip('][').split(',')
 
         # These variables refer to the sum of the times for each distance using thresholds
         t_lev = {}; t_res = {}; t_int = {}; t_trie = {}
-        for thres in thresholds :
-            t_lev[thres] = t_res[thres] = t_int[thres] = t_trie[thres] = 0
-            print( "\n### Threshold " + thres + " ")
-            for w in words:
-                # Levenstein
-                t_lev[thres] += measure_time(time_spellsuggester.suggest,
-                        [w, "levenshtein", int(thres)])[0]
-                # Restricted
-                t_res[thres] += measure_time(time_spellsuggester.suggest,
-                        [w, "restricted", int(thres)])[0]
-                # Intermediate
-                t_int[thres] += measure_time(time_spellsuggester.suggest,
-                        [w, "intermediate", int(thres)])[0]
-                # Trielevenshtein
-                t_trie[thres] += measure_time(time_spellsuggester.suggest, 
-                        [w, "trielevenshtein", int(thres)])[0]
 
-            print("* levenstein average: " +str(t_lev[thres]/len(words)) + "\n"
-                    "* restricted average: " + str(t_res[thres]/len(words)) + "\n"
-                    "* intermediate average: "  + str(t_int[thres]/len(words)) + "\n"
-                    "* trielevenshtein average: "  + str(t_trie[thres]/len(words)) + "\n")
+        for s in sizes:
+            time_spellsuggester = TimeSpellSuggester(path, int(s))
+            
+            # k words are chosen randomly, without repeating them
+            words = random.sample(time_spellsuggester.vocabulary, k = 10)
+
+            # For a given vocabulary size and threshold, measure each function time
+            t_lev[s] = {}; t_res[s] = {}; t_int[s] = {}; t_trie[s] = {}
+
+            for thres in thresholds :
+                t_lev[s][thres] = t_res[s][thres] = t_int[s][thres] = t_trie[s][thres] = 0
+                print( "\n### Threshold " + thres + ", size " + s + " ")
+                for w in words:
+                    # Levenstein
+                    t_lev[s][thres] += measure_time(time_spellsuggester.suggest,
+                            [w, "levenshtein", int(thres)])[0]
+                    # Restricted
+                    t_res[s][thres] += measure_time(time_spellsuggester.suggest,
+                            [w, "restricted", int(thres)])[0]
+                    # Intermediate
+                    t_int[s][thres] += measure_time(time_spellsuggester.suggest,
+                            [w, "intermediate", int(thres)])[0]
+                    # Trielevenshtein
+                    t_trie[s][thres] += measure_time(time_spellsuggester.suggest, 
+                            [w, "trielevenshtein", int(thres)])[0]
+
+                print("* levenstein average: " +str(t_lev[s][thres]/len(words)) + "\n"
+                        "* restricted average: " + str(t_res[s][thres]/len(words)) + "\n"
+                        "* intermediate average: "  + str(t_int[s][thres]/len(words)) + "\n"
+                        "* trielevenshtein average: "  + str(t_trie[s][thres]/len(words)) + "\n")
 
     except Exception as err:
         print("\n spellsuggest class error :",sys.exc_info[0])
