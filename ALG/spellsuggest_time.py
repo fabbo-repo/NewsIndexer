@@ -39,13 +39,10 @@ class TimeSpellSuggester:
 
     def __init__(self, vocab_file_path, talla):
         """Método constructor de la clase SpellSuggester
-
         Construye una lista de términos únicos (vocabulario),
         que además se utiliza para crear un trie.
-
         Args:
             vocab_file (str): ruta del fichero de texto para cargar el vocabulario.
-
         """
 
         tokenizer = re.compile("\W+")
@@ -65,7 +62,6 @@ class TimeSpellSuggester:
     def suggest(self, term, distance="levenshtein", threshold=2, use_thres=True):
 
         """Método para sugerir palabras similares siguiendo la tarea 3.
-
         Args:
             term (str): término de búsqueda.
             distance (str): algoritmo de búsqueda a utilizar
@@ -120,7 +116,12 @@ class TimeSpellSuggester:
         
         return results
 
-    
+
+"""
+    Different threshold values, random words and sizes are used to measure time. 
+    Basic distances are not taken into account, cause they run more iterations 
+    than versions with thresholds. So basic distances are more expensive
+"""
 if __name__ == "__main__":
     try:
         if(len(sys.argv) != 3) :
@@ -137,32 +138,34 @@ if __name__ == "__main__":
         thresholds = sys.argv[2].strip('][').split(',')    # Convert a string representation of list into list
 
         spellsuggester = SpellSuggester(path)
-        spellsuggester_trie = TrieSpellSuggester(path)
+        triespellsuggester = TrieSpellSuggester(path)
         
         # k words are chosen randomly, without repeating them
-        words = random.sample(spellsuggester_trie.vocabulary, k = 10)
+        words = random.sample(spellsuggester.vocabulary, k = 10)
 
-        t_lev = t_res = t_int = t_trie = 0
-        for thres in thresholds:
+        # These variables refer to the sum of the times for each distance using thresholds
+        t_lev = {}; t_res = {}; t_int = {}; t_trie = {}
+        for thres in thresholds :
+            t_lev[thres] = t_res[thres] = t_int[thres] = t_trie[thres] = 0
             print( "\n### Threshold " + thres + " ")
             for w in words:
                 # Levenstein
-                t_lev += measure_time(spellsuggester.suggest,
+                t_lev[thres] += measure_time(spellsuggester.suggest,
                         [w, "levenshtein", int(thres)])[0]
                 # Restricted
-                t_res += measure_time(spellsuggester.suggest,
+                t_res[thres] += measure_time(spellsuggester.suggest,
                         [w, "restricted", int(thres)])[0]
                 # Intermediate
-                t_int += measure_time(spellsuggester.suggest,
+                t_int[thres] += measure_time(spellsuggester.suggest,
                         [w, "intermediate", int(thres)])[0]
                 # Trielevenshtein
-                t_trie += measure_time(spellsuggester_trie.suggest, 
+                t_trie[thres] += measure_time(triespellsuggester.suggest, 
                         [w, "trielevenshtein", int(thres)])[0]
 
-            print("* levenstein average: " +str(t_lev/len(words)) + "\n"
-                    "* restricted average: " + str(t_res/len(words)) + "\n"
-                    "* intermediate average: "  + str(t_int/len(words)) + "\n"
-                    "* trielevenshtein average: "  + str(t_trie/len(words)) + "\n")
+            print("* levenstein average: " +str(t_lev[thres]/len(words)) + "\n"
+                    "* restricted average: " + str(t_res[thres]/len(words)) + "\n"
+                    "* intermediate average: "  + str(t_int[thres]/len(words)) + "\n"
+                    "* trielevenshtein average: "  + str(t_trie[thres]/len(words)) + "\n")
 
     except Exception as err:
         print("\n spellsuggest class error :",sys.exc_info[0])
