@@ -3,7 +3,7 @@ from nltk.stem.snowball import SnowballStemmer
 import os
 import re
 import math
-
+import ALG.spellsuggest as sps
 
 class SAR_Project:
     """
@@ -469,7 +469,13 @@ class SAR_Project:
             listTerm = term.split(" ")
             p = []
             for t in listTerm:
-                p = self.and_posting(p, list(self.index[field][t]))
+                if t not in self.index[field]:
+                    diccSuggest = sps.SpellSuggester.suggest(t)
+                    diccSuggest = list(diccSuggest.keys())
+                    for palabra in diccSuggest:
+                        p = self.and_posting(p,list(self.index[field][palabra]))
+                else:
+                    p = self.and_posting(p, list(self.index[field][t]))
             return p
         # Si el término lleva algún comodin, se aplica get_permuterm
         elif "*" in term or "?" in term: 
