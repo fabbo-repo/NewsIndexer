@@ -5,7 +5,7 @@ import argparse
 import pickle
 import sys
 
-from SAR_lib import SAR_Project
+from lib import SAR_Project
 
 
 def syntax():

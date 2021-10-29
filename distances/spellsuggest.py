@@ -2,7 +2,7 @@
 import re
 import threshold_distances as distan
 import trie_distances as trie_distan
-from trie import Trie
+from utils.trie import Trie
 import sys
 
 class SpellSuggester:

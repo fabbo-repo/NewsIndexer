@@ -1,4 +1,4 @@
-from trie import Trie
+from utils.trie import Trie
 
 #############################################################################################
 #    Levenstein Trie Distance

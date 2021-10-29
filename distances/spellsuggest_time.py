@@ -3,7 +3,7 @@ import re
 import collections
 import threshold_distances as thres_distan
 import trie_distances as trie_distan
-from trie import Trie
+from utils.trie import Trie
 import sys
 import time
 import random
@@ -179,6 +179,9 @@ if __name__ == "__main__":
                         "* restricted average: " + str(t_res[s][thres]/len(words)) + "\n"
                         "* intermediate average: "  + str(t_int[s][thres]/len(words)) + "\n"
                         "* trielevenshtein average: "  + str(t_trie[s][thres]/len(words)) + "\n")
+                
+            from utils.graphing import show_bar_graphing
+            show_bar_graphing(s, thresholds, t_lev, t_res, t_int, t_trie)
 
     except Exception as err:
         print("\n spellsuggest class error :",sys.exc_info[0])
