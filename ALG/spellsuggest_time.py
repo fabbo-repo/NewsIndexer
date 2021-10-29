@@ -35,7 +35,7 @@ def measure_time(function, arguments, prepare = dummy_function, prepare_args=())
 
 class TimeSpellSuggester:
 
-    def __init__(self, vocab_file_path, talla=10):
+    def __init__(self, vocab_file_path, size=10):
         """Método constructor de la clase SpellSuggester
         Construye una lista de términos únicos (vocabulario),
         que además se utiliza para crear un trie.
@@ -54,7 +54,7 @@ class TimeSpellSuggester:
             sorted_reversed = sorted(reversed_c, reverse=True)
             sorted_vocab = [word for (freq,word) in sorted_reversed]
         
-        self.vocabulary = self.sorted_vocab[0:talla]
+        self.vocabulary = self.sorted_vocab[0:size]
         self.trie = Trie(sorted(self.vocabulary))
 
     def suggest(self, term, distance="levenshtein", threshold=2):
@@ -113,20 +113,22 @@ class TimeSpellSuggester:
 """
 if __name__ == "__main__":
     try:
-        if(len(sys.argv) != 3) :
+        if(len(sys.argv) != 4) :
             print('\nFaltan argumentos, deben ser 2:\
                 \n\t1- path del fichero a analizar\
                 \n\t2- lista de thresholds ( [1,2,3,4,...] ) \
+                \n\t3- lista de tallas ( [..., 500, 1000, 1500, ...] ) \
                 (levenshtein, restricted, intermediate, trielevenshtein)\
                 \n\nPrueba con:\
-                \n\tpython spellsuggest_time.py ../corpora/quijote.txt [1,2,3,4,5]\n')
+                \n\tpython spellsuggest_time.py ../corpora/quijote.txt [1,2,3,4,5] [100, 500, 1000, 1500]\n')
             exit()
 
         path = sys.argv[1]
         # list of thresholds
         thresholds = sys.argv[2].strip('][').split(',')    # Convert a string representation of list into list
+        size = sys.argv[3]
 
-        time_spellsuggester = TimeSpellSuggester(path)
+        time_spellsuggester = TimeSpellSuggester(path, size)
         
         # k words are chosen randomly, without repeating them
         words = random.sample(time_spellsuggester.vocabulary, k = 10)
