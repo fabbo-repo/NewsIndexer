@@ -4,6 +4,7 @@ import collections
 import threshold_distances as thres_distan
 import trie_distances as trie_distan
 from utils.trie import Trie
+from utils.tables import create_csv
 import sys
 import time
 import random
@@ -54,7 +55,10 @@ class TimeSpellSuggester:
             sorted_reversed = sorted(reversed_c, reverse=True)
             sorted_vocab = [word for (freq,word) in sorted_reversed]
         
-        self.vocabulary = sorted_vocab[0:size]
+        print('Talla real de vocabulario: '+ str(len(sorted_vocab)))
+        if size < len(sorted_vocab) : self.vocab_size = size
+        else : self.vocab_size = len(sorted_vocab)
+        self.vocabulary = sorted_vocab[0:self.vocab_size-1]
         self.trie = Trie(sorted(self.vocabulary))
 
     def count_distance(self, word1, word2) :
@@ -135,10 +139,10 @@ if __name__ == "__main__":
             print('\nFaltan argumentos, deben ser 3:\
                 \n\t1- path del fichero a analizar\
                 \n\t2- lista de thresholds ( [1,2,3,4,...] ) \
-                \n\t3- lista de tallas ( [...,500,1000,1500,...] ) \
+                \n\t3- lista de tallas ( [...,10000,20000,30000,...] ) \
                 (levenshtein, restricted, intermediate, trielevenshtein)\
                 \n\nPrueba con:\
-                \n\tpython spellsuggest_time.py ../corpora/quijote.txt [1,2,3,4,5] [100,500,1000,1500]\n')
+                \n\tpython spellsuggest_time.py ../corpora/quijote.txt [1,2,3,4,5] [10000,20000,30000]\n')
             exit()
 
         path = sys.argv[1]
@@ -156,32 +160,43 @@ if __name__ == "__main__":
             words = random.sample(time_spellsuggester.vocabulary, k = 10)
 
             # For a given vocabulary size and threshold, measure each function time
-            t_lev[s] = {}; t_res[s] = {}; t_int[s] = {}; t_trie[s] = {}
+            t_lev[str(time_spellsuggester.vocab_size)] = {} 
+            t_res[str(time_spellsuggester.vocab_size)] = {} 
+            t_int[str(time_spellsuggester.vocab_size)] = {}
+            t_trie[str(time_spellsuggester.vocab_size)] = {}
 
             for thres in thresholds :
-                t_lev[s][thres] = t_res[s][thres] = t_int[s][thres] = t_trie[s][thres] = 0
-                print( "\n### Threshold " + thres + ", size " + s + " ")
+                t_lev[str(time_spellsuggester.vocab_size)][thres] = 0
+                t_res[str(time_spellsuggester.vocab_size)][thres] = 0
+                t_int[str(time_spellsuggester.vocab_size)][thres] = 0
+                t_trie[str(time_spellsuggester.vocab_size)][thres] = 0
+                print( "\n### Threshold " + thres + ", size " + str(time_spellsuggester.vocab_size) + " ")
                 for w in words:
                     # Levenstein
-                    t_lev[s][thres] += measure_time(time_spellsuggester.suggest,
+                    t_lev[str(time_spellsuggester.vocab_size)][thres] += measure_time(time_spellsuggester.suggest,
                             [w, "levenshtein", int(thres)])[0]
                     # Restricted
-                    t_res[s][thres] += measure_time(time_spellsuggester.suggest,
+                    t_res[str(time_spellsuggester.vocab_size)][thres] += measure_time(time_spellsuggester.suggest,
                             [w, "restricted", int(thres)])[0]
                     # Intermediate
-                    t_int[s][thres] += measure_time(time_spellsuggester.suggest,
+                    t_int[str(time_spellsuggester.vocab_size)][thres] += measure_time(time_spellsuggester.suggest,
                             [w, "intermediate", int(thres)])[0]
                     # Trielevenshtein
-                    t_trie[s][thres] += measure_time(time_spellsuggester.suggest, 
+                    t_trie[str(time_spellsuggester.vocab_size)][thres] += measure_time(time_spellsuggester.suggest, 
                             [w, "trielevenshtein", int(thres)])[0]
-
-                print("* levenstein average: " +str(t_lev[s][thres]/len(words)) + "\n"
-                        "* restricted average: " + str(t_res[s][thres]/len(words)) + "\n"
-                        "* intermediate average: "  + str(t_int[s][thres]/len(words)) + "\n"
-                        "* trielevenshtein average: "  + str(t_trie[s][thres]/len(words)) + "\n")
+                # Time average is calculated
+                t_lev[str(time_spellsuggester.vocab_size)][thres] = round(t_lev[str(time_spellsuggester.vocab_size)][thres]/len(words),5)
+                t_res[str(time_spellsuggester.vocab_size)][thres] = round(t_res[str(time_spellsuggester.vocab_size)][thres]/len(words),5)
+                t_int[str(time_spellsuggester.vocab_size)][thres] = round(t_int[str(time_spellsuggester.vocab_size)][thres]/len(words),5)
+                t_trie[str(time_spellsuggester.vocab_size)][thres] = round(t_trie[str(time_spellsuggester.vocab_size)][thres]/len(words),5)
+                print("* levenstein average: " + str(t_lev[str(time_spellsuggester.vocab_size)][thres]) + "\n"
+                        "* restricted average: " + str(t_res[str(time_spellsuggester.vocab_size)][thres]) + "\n"
+                        "* intermediate average: "  + str(t_int[str(time_spellsuggester.vocab_size)][thres]) + "\n"
+                        "* trielevenshtein average: "  + str(t_trie[str(time_spellsuggester.vocab_size)][thres]) + "\n")
                 
             from utils.graphing import show_bar_graphing
-            show_bar_graphing(s, thresholds, t_lev, t_res, t_int, t_trie)
+            show_bar_graphing(str(time_spellsuggester.vocab_size), thresholds, t_lev, t_res, t_int, t_trie)
+            create_csv(str(time_spellsuggester.vocab_size), thresholds, t_lev, t_res, t_int, t_trie)
 
     except Exception as err:
         print("\n spellsuggest class error :",sys.exc_info[0])
