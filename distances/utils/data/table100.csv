@@ -1,5 +1,0 @@
-Thresholds;1;2
-levenshtein;0.2;0.3
-intermediate;0.2;0.3
-restricted;0.2;0.3
-trielevenshtein;0.2;0.3
