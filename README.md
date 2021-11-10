@@ -51,3 +51,67 @@ date: 2015-03-25
 title: Diez motivos para querer vivir en Palma de Mallorca
 keywords: mallorca,palma,vivir,motivos
 ~~~
+
+-----------------------------------------------------------
+## Project tree
+~~~
+NewsIndexer
+├── corpora
+│   ├── 2015
+│   │   ├── 01
+│   │   │   ├── 2015-01-02.json
+│   │   │   └── ...
+│   │   └── ...
+│   ├── 2016
+│   │   ├── 01
+│   │   │   ├── 2016-01-01.json
+│   │   │   └── ...
+│   │   └── ...
+│   └── quijote.txt
+│
+├── distances
+│   ├── basic_distances.py
+│   ├── data
+│   │   ├── plot10000.png
+│   │   ├── ...
+│   │   └── table6000.csv
+│   ├── generate_distance_results.py
+│   ├── read_results.py
+│   ├── results
+│   │   ├── result_intermediate_quijote.txt
+│   │   ├── result_levenshtein_quijote.txt
+│   │   └── result_restricted_quijote.txt
+│   ├── spellsuggest.py
+│   ├── spellsuggest_time.py
+│   ├── test
+│   │   └── meld.txt
+│   ├── threshold_distances.py
+│   ├── trie_distances.py
+│   └── utils
+│       ├── graphing.py
+│       ├── tables.py
+│       └── trie.py
+│
+├── indexer.py
+│
+├── lib_Alterno.py
+│
+├── lib.py
+│
+├── query_results
+│   ├── queries_full.txt
+│   └── ...
+│
+├── reports
+│   ├── basic_query_report.pdf
+│   └── distances_query_report.pdf
+│
+├── searcher.py
+│
+├── index
+│   └── ...
+│
+└── statistics
+    ├── stats_2015_M.txt
+    └── ...
+~~~
