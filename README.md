@@ -11,7 +11,7 @@ The purpose of this project is the implementation in python3 of a news indexing 
 ## Testing:
 Execution sample for *2015* indexation:
 ~~~
-python indexer.py corpora/2015 index/2015_index.bin
+python indexer.py corpora/news/2015 index/2015_index.bin
 ~~~
 Output:
 ~~~
