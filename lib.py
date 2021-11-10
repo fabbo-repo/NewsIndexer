@@ -469,10 +469,8 @@ class SAR_Project:
             listTerm = term.split(" ")
             p = []
             for t in listTerm:
-                if t not in self.index[field]:
-                    diccSuggest = sps.SpellSuggester.suggest(t)
-                    diccSuggest = list(diccSuggest.keys())
-                    for palabra in diccSuggest:
+                if t not in self.index[field] :
+                    for palabra in sps.suggest(t):
                         p = self.and_posting(p,list(self.index[field][palabra]))
                 else:
                     p = self.and_posting(p, list(self.index[field][t]))
@@ -485,8 +483,11 @@ class SAR_Project:
             return self.get_stemming(term, field)
         # Para el caso de solo un término y solo se desea su posting list:
         else:
-            # Si el término no se encuentra indexado devolvemos []
-            if(term.replace("\"","") not in self.index[field]): return []
+            # Si el término no se encuentra indexado usamos levenshtein
+            if(term.replace("\"","") not in self.index[field]):
+                for palabra in sps.suggest(term):
+                    p = self.and_posting(p,list(self.index[field][palabra]))
+                return p
             # En caso de que se haya implementado la funcionalidad positional,
             # cada termino contiene un diccionario, si se indexa con positional 
             # este metodo debe devolver solo las claves de dicho diccionario, 
