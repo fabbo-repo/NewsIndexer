@@ -3,13 +3,13 @@ NewsIndexer
 │   ├── 2015
 │   │   ├── 01
 │   │   │   ├── 2015-01-02.json
-│   │   │   ├── ...
-│   │   ├── ...
+│   │   │   └── ...
+│   │   └── ...
 │   ├── 2016
 │   │   ├── 01
 │   │   │   ├── 2016-01-01.json
-│   │   │   ├── ...
-│   │   ├── ...
+│   │   │   └── ...
+│   │   └── ...
 │   └── quijote.txt
 │
 ├── distances
@@ -34,13 +34,23 @@ NewsIndexer
 │       ├── graphing.py
 │       ├── tables.py
 │       └── trie.py
+│
 ├── indexer.py
+│
 ├── lib_Alterno.py
+│
 ├── lib.py
+│
 ├── query_results
 │   ├── queries_full.txt
-│   ├── ...
+│   └── ...
+│
+├── reports
+│   ├── basic_query_report.pdf
+│   └── distances_query_report.pdf
+│
 ├── searcher.py
+│
 └── statistics
     ├── stats_2015_M.txt
-    ├── ...
+    └── ...
