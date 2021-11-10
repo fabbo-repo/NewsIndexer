@@ -51,6 +51,9 @@ NewsIndexer
 │
 ├── searcher.py
 │
+├── index
+│   └── ...
+│
 └── statistics
     ├── stats_2015_M.txt
     └── ...
