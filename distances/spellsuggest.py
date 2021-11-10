@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
 import re
-import threshold_distances as distan
-import trie_distances as trie_distan
-from utils.trie import Trie
 import sys
-
+try :
+    import threshold_distances as distan
+    import trie_distances as trie_distan
+    from utils.trie import Trie
+except :
+    import distances.threshold_distances as distan
+    import distances.trie_distances as trie_distan
+    from distances.utils.trie import Trie
+    
 class SpellSuggester:
 
     """

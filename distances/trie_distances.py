@@ -1,5 +1,5 @@
-from utils.trie import Trie
-
+try : from utils.trie import Trie
+except : from distances.utils.trie import Trie
 #############################################################################################
 #    Levenstein Trie Distance
 #############################################################################################

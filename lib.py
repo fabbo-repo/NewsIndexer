@@ -3,7 +3,7 @@ from nltk.stem.snowball import SnowballStemmer
 import os
 import re
 import math
-import ALG.spellsuggest as sps
+import distances.spellsuggest as sps
 
 class SAR_Project:
     """
