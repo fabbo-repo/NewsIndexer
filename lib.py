@@ -384,8 +384,9 @@ class Core:
         qpartes = query.split()
         i = len(qpartes) - 1
         busquedapos = False
- 
-        if len(qpartes) <= 2 and not (len(qpartes) == 2 and '"' in qpartes[0]): #Dos opciones: o es un NOT término o es un término
+
+        # Dos opciones: o es un NOT término o es un término
+        if len(qpartes) <= 2 and not (len(qpartes) == 2 and '"' in qpartes[0]): 
             if len(qpartes) == 2 and qpartes[0] == "NOT": #NOT término
                 res = self.solve_query(qpartes[1])
                 res = self.reverse_posting(res)
@@ -401,21 +402,29 @@ class Core:
         else: #Para todo lo que es mayor que el simple término o su negación
             zonaderecha = qpartes[i]
             if ')' in qpartes[i]: #SI HAY UN PARÉNTESIS
-                parentesis = len(re.split(r'(\))', qpartes[i])[1:])/2 #Calculamos el número de paréntesis en la primera palabra con regex, eliminamos el primer elemento del split ya que es la primera palabra, y dividimos entre dos ya que después de cada paréntesis hay un espacio en blanco
+                parentesis = len(re.split(r'(\))', qpartes[i])[1:])/2 
+                # Calculamos el número de paréntesis en la primera palabra con regex, 
+                # eliminamos el primer elemento del split ya que es la primera palabra, 
+                # y dividimos entre dos ya que después de cada paréntesis hay un espacio en blanco
                 parentesis -= len(re.split(r'(\()', qpartes[i])[1:])/2
                 j = i
                 while parentesis > 0:
                     j -= 1
+                    # Si hay otro paréntesis dentro del nuestro, le sumamos uno a la variable de paréntesis que buscamos
                     if ')' in qpartes[j]:
-                        parentesis += len(re.split(r'(\))', qpartes[j])[1:])/2 #Si hay otro paréntesis dentro del nuestro, le sumamos uno a la variable de paréntesis que buscamos
+                        parentesis += len(re.split(r'(\))', qpartes[j])[1:])/2 
                     if '(' in qpartes[j]:
                         parentesis -= len(re.split(r'(\()', qpartes[j])[1:])/2
-                qpartes[j] = qpartes[j][1:]#Con esto y el siguiente eliminamos los dos paréntesis que hemos tomado, para cuando vayamos a calcular lo que hay dentro
+                # Con esto y el siguiente eliminamos los dos paréntesis que hemos tomado, 
+                # para cuando vayamos a calcular lo que hay dentro
+                qpartes[j] = qpartes[j][1:]
                 qpartes[i] = qpartes[i][:len(qpartes[i]) - 1]
                 zonaderecha = qpartes[j:i+1]
-                i = j #Ahora el puntero se encuentra al principio del paréntesis, por lo que podemos considerar todo este como un solo término calculado a partir de ahora y que actue como tal
+                # Ahora el puntero se encuentra al principio del paréntesis, por lo que podemos considerar 
+                # todo este como un solo término calculado a partir de ahora y que actue como tal
+                i = j 
                 zonaderecha = " ".join(zonaderecha)
-            if '"' in qpartes[i]: #BUSQUEDA POSICIONAL
+            if '"' in qpartes[i]: # BUSQUEDA POSICIONAL
                 if qpartes[i-1] == "AND" or qpartes[i-1] == "OR" or qpartes[i-1] == "NOT":
                     zonaderecha = qpartes[i]
                 else:
@@ -434,16 +443,19 @@ class Core:
                         res = self.get_posting(" ".join(posicional))
                     i = j
                     busquedapos = True
+            # Sea el resultado de un paréntesis o un solo término, todo se ha calculado aquí
             if(busquedapos == False):
-                res = self.solve_query(zonaderecha) #Sea el resultado de un paréntesis o un solo término, todo se ha calculado aquí
-            if i == 0: #El paréntesis de apertura se encuentra en la primera palabra, por lo que todo lo de la derecha es el resultado que buscamos
+                res = self.solve_query(zonaderecha) 
+            # El paréntesis de apertura se encuentra en la primera palabra, 
+            # por lo que todo lo de la derecha es el resultado que buscamos
+            if i == 0: 
                 return res
             if qpartes[i-1] == "NOT":
                 res = self.reverse_posting(res)
-                if i-1 == 0:#Si el NOT es la primera palabra de la query, devolvemos la inversa de lo calculado
+                if i-1 == 0: # Si el NOT es la primera palabra de la query, devolvemos la inversa de lo calculado
                     return res
                 else:
-                     i -= 1 #Restamos uno a i, y así realizamos el res como si nada posteriormente
+                    i -= 1 # Restamos uno a i, y así realizamos el res como si nada posteriormente
             zonaizquierda = self.solve_query( " ".join(qpartes[:i-1]))
             if qpartes[i-1] == "AND":
                 res = self.and_posting(zonaizquierda, res)
@@ -487,7 +499,10 @@ class Core:
         # Para el caso de solo un término y solo se desea su posting list:
         else :
             # Si el término no se encuentra indexado usamos levenshtein
-            if(term.replace("\"","") not in self.index[field]):
+            # se evita para casos con permuterm o stemming
+            if term.replace("\"","") not in self.index[field] \
+                and not self.use_stemming \
+                and not ("*" in term or "?" in term):
                 p = []
                 for similar_term in self.spellsuggest.suggest(term) :
                     # Juntar los posting list de los terminos similares
