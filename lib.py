@@ -157,8 +157,7 @@ class Core:
         # Crear indice stemming si se solicita
         if(self.stemming): self.make_stemming()
         # Crear spellsuggest con vocuabulario
-        vocab = []
-        vocab += list(self.index['article'])
+        vocab = list(self.index['article'])
         with open(os.path.join('index','vocabulary'), 'w', encoding='utf-8') as fh:
             fh.write(' '.join(vocab))
         self.spellsuggest = sps.SpellSuggester(os.path.join('index','vocabulary'))
