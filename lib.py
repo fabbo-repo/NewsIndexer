@@ -465,16 +465,12 @@ class Core:
         # Si term contiene más de una palabra y lleva comillas, se aplica get_positionals
         if len(term.split(" ")) > 1 and "\"" in term:
             return self.get_positionals(term.replace("\"","").split(" "), field)
-        # Si term contiene más de una palabra y no lleva comillas, se aplica get_positionals
+        # Si term contiene más de una palabra y no lleva comillas, se aplica and_posting
         elif len(term.split(" ")) > 1  and "\"" not in term:
             listTerm = term.split(" ")
             p = []
             for t in listTerm:
-                if t not in self.index[field] :
-                    for palabra in sps.suggest(t):
-                        p = self.and_posting(p,list(self.index[field][palabra]))
-                else:
-                    p = self.and_posting(p, list(self.index[field][t]))
+                p = self.and_posting(p, list(self.get_posting(t)))
             return p
         # Si el término lleva algún comodin, se aplica get_permuterm
         elif "*" in term or "?" in term: 
@@ -483,11 +479,12 @@ class Core:
         elif self.use_stemming and "\"" not in term: 
             return self.get_stemming(term, field)
         # Para el caso de solo un término y solo se desea su posting list:
-        else:
+        else :
             # Si el término no se encuentra indexado usamos levenshtein
             if(term.replace("\"","") not in self.index[field]):
-                for palabra in sps.suggest(term):
-                    p = self.and_posting(p,list(self.index[field][palabra]))
+                for palabra in sps.suggest(term) :
+                    # Juntar los posting list
+                    p = self.or_posting(p,list(self.index[field][palabra]))
                 return p
             # En caso de que se haya implementado la funcionalidad positional,
             # cada termino contiene un diccionario, si se indexa con positional 
@@ -521,7 +518,7 @@ class Core:
             # la intersección
             post = list(self.index[field][terms[0]]) if terms[0] in self.index[field] else []
             for t in subList: 
-                post = self.and_posting(post, list(self.index[field][t]))
+                post = self.and_posting(post, list(self.index[field][t])) # TODO Cambiarlo por una llamada a get_posting
             # Se recorre la posting list de los terminos obtenida anteriormente
             for new in post:
                 # Se recorre las posiciones del primer termino en cada noticia
