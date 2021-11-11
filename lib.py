@@ -38,7 +38,7 @@ class SAR_Project:
 
         """
         self.index = {} # hash para el indice invertido de terminos --> clave: termino, valor: posting list.
-                        # Si se hace la implementacion multifield, se pude hacer un segundo nivel de hashing de tal forma que:
+                        # Contiene un segundo nivel de hashing de tal forma que:
                         # self.index['title'] seria el indice invertido del campo 'title'.
         self.sindex = {} # hash para el indice invertido de stems --> clave: stem, valor: lista con los terminos que tienen ese stem
         self.ptindex = {} # hash para el indice permuterm.
