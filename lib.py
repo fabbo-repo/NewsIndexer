@@ -156,6 +156,12 @@ class Core:
         if(self.permuterm): self.make_permuterm()
         # Crear indice stemming si se solicita
         if(self.stemming): self.make_stemming()
+        # Crear spellsuggest con vocuabulario
+        vocab = []
+        vocab += list(self.index['article'])
+        with open(os.path.join('index','vocabulary'), 'w', encoding='utf-8') as fh:
+            fh.write(' '.join(vocab))
+        self.spellsuggest = sps.SpellSuggester(os.path.join('index','vocabulary'))
         
     def index_file(self, filename):
         """
@@ -482,12 +488,12 @@ class Core:
         else :
             # Si el término no se encuentra indexado usamos levenshtein
             if(term.replace("\"","") not in self.index[field]):
-                for palabra in sps.suggest(term) :
-                    # Juntar los posting list
-                    p = self.or_posting(p,list(self.index[field][palabra]))
+                p = []
+                for similar_term in self.spellsuggest.suggest(term) :
+                    # Juntar los posting list de los terminos similares
+                    p = self.or_posting(p, list(self.index[field][similar_term]))
                 return p
-            # En caso de que se haya implementado la funcionalidad positional,
-            # cada termino contiene un diccionario, si se indexa con positional 
+            # Cada termino contiene un diccionario, si se indexa con positional 
             # este metodo debe devolver solo las claves de dicho diccionario, 
             # con list(...) se obtienen las claves en una lista, y si se indexa sin
             # positional cada termino tendra una lista por lo que al aplicar list(...)
@@ -518,7 +524,7 @@ class Core:
             # la intersección
             post = list(self.index[field][terms[0]]) if terms[0] in self.index[field] else []
             for t in subList: 
-                post = self.and_posting(post, list(self.index[field][t])) # TODO Cambiarlo por una llamada a get_posting
+                post = self.and_posting(post, list(self.get_posting(t)))
             # Se recorre la posting list de los terminos obtenida anteriormente
             for new in post:
                 # Se recorre las posiciones del primer termino en cada noticia

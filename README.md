@@ -28,6 +28,12 @@ Positional queries are NOT allowed.
 Time indexing: 4.70s.
 Time saving: 0.08s.
 ~~~
+
+In order to get full featueres execute:
+~~~
+python indexer.py -S -P -M -O corpora/news/2015 index/2015_index_full.bin
+~~~
+
 Execute a query:
 ~~~
 python searcher.py -Q 'isla AND valencia AND pero' index/2015_index.bin
