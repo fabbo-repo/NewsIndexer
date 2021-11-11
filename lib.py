@@ -5,7 +5,7 @@ import re
 import math
 import distances.spellsuggest as sps
 
-class SAR_Project:
+class Core:
     """
     Prototipo de la clase para realizar la indexacion y la recuperacion de noticias
         
@@ -51,6 +51,7 @@ class SAR_Project:
         self.show_snippet = False # valor por defecto, se cambia con self.set_snippet()
         self.use_stemming = False # valor por defecto, se cambia con self.set_stemming()
         self.use_ranking = False  # valor por defecto, se cambia con self.set_ranking()
+        self.spellsuggest = None # valor por defecto, se cambia una vez obtenido el vocabulario
 
 
     ###############################

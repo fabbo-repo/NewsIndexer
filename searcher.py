@@ -1,11 +1,8 @@
 # version 1.1
 
-
 import argparse
 import pickle
 import sys
-
-from lib import SAR_Project
 
 
 def syntax():
