@@ -15,7 +15,7 @@ python indexer.py corpora/news/2015 index/2015_index.bin
 ~~~
 Output:
 ~~~
-======================================== \
+========================================
 Number of indexed days: 285 
 ----------------------------------------
 Number of indexed news: 803

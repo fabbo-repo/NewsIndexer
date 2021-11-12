@@ -45,18 +45,38 @@ if __name__ == "__main__":
                     help='file with queries.')
     group1.add_argument('-T', '--test', dest='test', metavar= 'test', type=str, action='store',
                     help='file with queries and results, for testing.')
-
+    
+    group2 = parser.add_mutually_exclusive_group()
+    group2.add_argument('-BL', '--blevensh', action='store_true', default=True,
+                    help='basic levenshtein distance.')
+    group2.add_argument('-RL', '--rlevensh', action='store_true', default=False,
+                    help='restricted levenshtein distance.')
+    group2.add_argument('-IL', '--ilevensh', action='store_true', default=False, 
+                    help='intermediate levenshtein distance.')
+    group2.add_argument('-TL', '--tlevensh', action='store_true', default=False, 
+                    help='levenshtein distance using Trie.')
+    
+    group2 = parser.add_mutually_exclusive_group()
+    group2.add_argument('-Th', '--threshold', metavar='threshold', type=int, default=2,
+                        help='threshold used for levenshtein distance.')
+    
     args = parser.parse_args()
 
     with open(args.index, 'rb') as fh:
         searcher = pickle.load(fh)
 
     searcher.set_stemming(args.stem)
+    searcher.set_stemming(args.stem)
     searcher.set_ranking(args.rank)
     searcher.set_showall(args.all)
     searcher.set_snippet(args.snippet)
-
-
+    if args.blevensh : searcher.set_distance('levenshtein')
+    if args.rlevensh : searcher.set_distance('restricted')
+    if args.ilevensh : searcher.set_distance('intermediate')
+    if args.tlevensh : searcher.set_distance('trielevenshtein')
+    searcher.set_threshold(args.threshold)
+    
+    
     # se debe contar o mostrar resultados?
     if args.count is True:
         fnc = searcher.solve_and_count

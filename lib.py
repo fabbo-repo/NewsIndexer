@@ -52,6 +52,8 @@ class Core:
         self.use_stemming = False # valor por defecto, se cambia con self.set_stemming()
         self.use_ranking = False  # valor por defecto, se cambia con self.set_ranking()
         self.spellsuggest = None # valor por defecto, se cambia una vez obtenido el vocabulario
+        self.distance = 'levenshtein' # valor por defecto, se cambia una vez llame a searcher
+        self.threshold = 2 # valor por defecto, se cambia una vez llame a searcher
 
 
     ###############################
@@ -121,6 +123,23 @@ class Core:
         self.use_ranking = v
 
 
+    def set_distance(self, d):
+        """
+        
+        input: "d" str.
+        
+        """
+        self.distance = d
+        
+        
+    def set_threshold(self, th):
+        """
+        
+        input: "th" int.
+
+        """
+        self.threshold = th
+        
 
 
     ###############################
@@ -503,7 +522,7 @@ class Core:
                 and not self.use_stemming \
                 and not ("*" in term or "?" in term):
                 p = []
-                for similar_term in self.spellsuggest.suggest(term) :
+                for similar_term in self.spellsuggest.suggest(term, self.distance, self.threshold) :
                     # Juntar los posting list de los terminos similares
                     p = self.or_posting(p, list(self.index[field][similar_term]))
                 return p
