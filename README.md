@@ -8,6 +8,12 @@ The purpose of this project is the implementation in python3 of a news indexing 
 
 
 -------------------------------------
+## Requirements:
+~~~
+pip install -r requirements.txt
+~~~
+
+--------------------------------------
 ## Testing:
 Execution sample for *2015* indexation:
 ~~~
