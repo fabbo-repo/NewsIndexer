@@ -90,7 +90,8 @@ if __name__ == "__main__":
             lines = fh.read().split('\n')
             for line in lines:
                 if len(line) > 0 and not line.startswith('#'):
-                    query, reference = line.split('\t')
+                    aux = line.split('  ')
+                    query, reference = aux[0], aux[2]
                     reference = int(reference)
                     result = searcher.solve_and_count(query)
                     if result != reference:
