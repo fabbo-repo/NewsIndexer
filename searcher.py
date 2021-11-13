@@ -10,6 +10,19 @@ def syntax():
     #print(sys.argv)
     sys.exit()
 
+def case(args, aux):
+    index = 0
+    if args.blevensh and args.threshold == 1 : index = 1
+    if args.blevensh and args.threshold == 2 : index = 2
+    if args.blevensh and args.threshold == 3 : index = 3
+    if args.rlevensh and args.threshold == 1 : index = 4
+    if args.rlevensh and args.threshold == 2 : index = 5
+    if args.rlevensh and args.threshold == 3 : index = 6
+    if args.ilevensh and args.threshold == 1 : index = 7
+    if args.ilevensh and args.threshold == 2 : index = 8
+    if args.ilevensh and args.threshold == 3 : index = 9
+    return aux[index]
+
 
 if __name__ == "__main__":
 
@@ -91,7 +104,8 @@ if __name__ == "__main__":
             for line in lines:
                 if len(line) > 0 and not line.startswith('#'):
                     aux = line.split('  ')
-                    query, reference = aux[0], aux[2]
+                    query = aux[0]
+                    reference = case(args, aux)
                     reference = int(reference)
                     result = searcher.solve_and_count(query)
                     if result != reference:
