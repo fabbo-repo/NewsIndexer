@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
 import sys
-import collections
 try :
     import threshold_distances as distan
     import trie_distances as trie_distan
