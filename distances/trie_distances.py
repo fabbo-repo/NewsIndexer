@@ -47,7 +47,7 @@ def dp_restricted_damerau_trie(x, trie, th) :
         current[st] = current[trie.get_parent(st)] + 1
     
     for ch in x :
-        prev2 , prev , current = prev, current,[]
+        prev2 , prev , current = prev, current, prev
         current[0] = prev[0]+1
         for st in range(1,len_trie):
             father = trie.get_parent(st)
