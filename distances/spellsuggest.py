@@ -46,21 +46,21 @@ class SpellSuggester:
             return sorted(vocab)
 
     def count_distance(self, word1, word2) :
-            distance = 0; lista=[]; d1=d2={}
-            for c in word1: 
-                if c not in d1 : d1[c]=1
-                else: d1[c]+=1
+        distance = 0; lista=[]; d1=d2={}
+        for c in word1: 
+            if c not in d1 : d1[c]=1
+            else: d1[c]+=1
 
-            for c in word2: 
-                if c not in d2 : d2[c]=1
-                else: d2[c]+=1
+        for c in word2: 
+            if c not in d2 : d2[c]=1
+            else: d2[c]+=1
 
-            for c in lista: 
-                if c in d1 and c in d2 and d1[c] != d2[c]: distance += abs(d1[c]-d2[c])
-                elif c not in d1: distance += d2[c]
-                elif c not in d2: distance += d1[c]
-            
-            return distance
+        for c in lista: 
+            if c in d1 and c in d2 and d1[c] != d2[c]: distance += abs(d1[c]-d2[c])
+            elif c not in d1: distance += d2[c]
+            elif c not in d2: distance += d1[c]
+        
+        return distance
 
     def suggest(self, term, distance="levenshtein", threshold=2):
 
