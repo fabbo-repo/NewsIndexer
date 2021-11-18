@@ -55,11 +55,8 @@ class SpellSuggester:
             if c not in d2 : d2[c]=1
             else: d2[c]+=1
 
-<<<<<<< Updated upstream
-=======
         # In lista we save the keys of the dictionaries d1 and d2
         lista = list(d1).union(list(d2))
->>>>>>> Stashed changes
         for c in lista: 
             if c in d1 and c in d2 and d1[c] != d2[c]: distance += abs(d1[c]-d2[c])
             elif c not in d1: distance += d2[c]
