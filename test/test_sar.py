@@ -11,7 +11,7 @@ class SearcherTest(unittest.TestCase):
         unittest.TestCase.__init__(self, *args, **kwargs)
     
     def test_basic_parentesis(self):
-        with open('../index/2015_index.bin', 'rb') as fh:
+        with open('../index/2015_index_full.bin', 'rb') as fh:
             searcher = pickle.load(fh)
         with open("test_sar.txt", encoding='utf-8') as fh:
             lines = fh.read().split('\n')

@@ -13,11 +13,8 @@
 python searcher.py index/2015_index.bin -T .\test\test_alt.txt -BL -Th 2
 ```
 
-
-
 ##### 	2.  test_alt.py
 
 ```shell
  python .\test\test_alt.py            
 ```
-

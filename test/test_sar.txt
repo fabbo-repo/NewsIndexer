@@ -27,3 +27,7 @@ NOT (google OR cultura) AND años  405
 (psoe OR pp OR CiU) AND (economía OR política)  43
 NOT (psoe OR pp OR CiU) AND (economía OR política)  113
 mujer AND ((psoe OR pp OR CiU) AND (economía OR política))  4
+cultura  66
+cultura AND date:2015-01-21  1
+cultura AND NOT date:2015-01-21  65
+móvil  33
