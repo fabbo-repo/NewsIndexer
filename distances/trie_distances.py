@@ -10,9 +10,9 @@ def dp_levenshtein_trie(x, trie, th) :
     # current and prev are created as lists with len_trie size
     current = [None] * len_trie
     prev = [None] * len_trie 
-    current[0] = 0
-
+    
     # first column is filled
+    current[0] = 0
     for st in range(1,len_trie):
         current[st] = current[trie.get_parent(st)] + 1
     
@@ -21,7 +21,11 @@ def dp_levenshtein_trie(x, trie, th) :
         current[0] = prev[0]+1
         for st in range(1,len_trie):
             father = trie.get_parent(st)
-            current[st] = min(prev[st]+1,current[father]+1,prev[father] + (ch != trie.get_label(st)) )
+            current[st] = min(
+                prev[st]+1,
+                current[father]+1,
+                prev[father] + (ch != trie.get_label(st)) 
+            )
         if(min(current) > th) : return res
     
     for st in range(1,len_trie):
@@ -40,9 +44,9 @@ def dp_restricted_damerau_trie(x, trie, th) :
     # current and prev are created as lists with len_trie size
     current = [None] * len_trie
     prev = [None] * len_trie 
-    current[0] = 0
-
+    
     # first column is filled
+    current[0] = 0
     for st in range(1,len_trie):
         current[st] = current[trie.get_parent(st)] + 1
     
@@ -51,7 +55,12 @@ def dp_restricted_damerau_trie(x, trie, th) :
         current[0] = prev[0]+1
         for st in range(1,len_trie):
             father = trie.get_parent(st)
-            current[st] = min(prev2[st-1]+1,prev[st]+1,current[father]+1,prev[father] + (ch != trie.get_label(st)) )
+            current[st] = min(
+                prev2[st-1]+1,
+                prev[st]+1,
+                current[father]+1,
+                prev[father] + (ch != trie.get_label(st)) 
+            )
         if(min(current) > th) : return res
     
     for st in range(1,len_trie):
